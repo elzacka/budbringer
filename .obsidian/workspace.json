@@ -1,0 +1,305 @@
+{
+  "main": {
+    "id": "f57571c8a67c84ef",
+    "type": "split",
+    "children": [
+      {
+        "id": "a5b76cfe2ca3daff",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b2ef9d916ecf7f9e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Admin ting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Admin ting"
+            }
+          },
+          {
+            "id": "8636e1d9dbfcf623",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/budbringer-default v3.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "budbringer-default v3"
+            }
+          },
+          {
+            "id": "a8eab0e847c71056",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Admin ting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Admin ting"
+            }
+          },
+          {
+            "id": "0c3e3bae1385f45b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Terminal log ved curl.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Terminal log ved curl"
+            }
+          },
+          {
+            "id": "b650b622177e8d00",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Budbringer - Forbedringer_backup.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Budbringer - Forbedringer_backup"
+            }
+          },
+          {
+            "id": "35dc9b7f66b68205",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Kommandoer i Terminal.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Kommandoer i Terminal"
+            }
+          },
+          {
+            "id": "2e82e7169d5e8e5c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Do not use this folder or its content/Admin ting.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Admin ting"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "b46f1a710e404e95",
+    "type": "split",
+    "children": [
+      {
+        "id": "75c3b43c17b5ce20",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d215cbb9eeeb8c29",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "02f60bb98c44934e",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "84af913dbacdcf5b",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "d8b3230daf3b54ac",
+    "type": "split",
+    "children": [
+      {
+        "id": "e8d7a44e73ef68c0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ebdc842fbb0b0b8f",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "docs/setup-guide.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for setup-guide"
+            }
+          },
+          {
+            "id": "8d4d27ccbb34f29c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "docs/setup-guide.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from setup-guide"
+            }
+          },
+          {
+            "id": "abc35ca3e8dfbd9c",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "410e9590bcf3ea1e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "docs/setup-guide.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of setup-guide"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "2e82e7169d5e8e5c",
+  "lastOpenFiles": [
+    "README.md",
+    "Feil i Terminal.md",
+    "app/page.tsx.sb-acfe61a7-jaWYYf",
+    "Do not use this folder or its content/Feil i Terminal.md",
+    "Do not use this folder or its content/system-spec.md",
+    "Do not use this folder or its content/setup-guide.md",
+    "Do not use this folder or its content/env-overview.csv",
+    "public/budbringer-logo.png",
+    "public/Budbringer_Logo og navn.png",
+    "app/page.tsx",
+    "nothing.csv",
+    "supabase/migrations/202509220001_pipeline_sources_updated_at.sql",
+    "Do not use this folder or its content/Kommandoer i Terminal.md",
+    "supabase/supabase",
+    "Budbringer_Logo og navn.png",
+    "Do not use this folder or its content/Komplett seed-data for Budbringer KI-kilder.md",
+    "public/Budbringer_logo.png",
+    "public",
+    "Budbringer_logo.png",
+    "supabase/migrations/202509210002_seed_ai_pipeline.sql",
+    "Do not use this folder or its content/Komplett seed-data for Budbringer KI-kilder_backup.md",
+    "Do not use this folder or its content/Budbringer - Forbedringer_backup.md",
+    "Do not use this folder or its content/Budbringer - Forbedringer.md",
+    "supabase/migrations/202509210001_pipeline_architecture.sql",
+    "docs/system-spec.md",
+    "docs/setup-guide.md",
+    "Do not use this folder or its content/Terminal log ved curl.md",
+    "Do not use this folder or its content/I built an AI system that scrapes stories off the internet and generates a daily newsletter.md",
+    "I built an AI system that scrapes stories off the internet and generates a daily newsletter.pdf",
+    "Do not use this folder or its content/Admin ting.md",
+    "docs/env-overview.md",
+    "Do not use this folder or its content/Error - logdata in Cloudfare.md",
+    "Do not use this folder or its content/budbringer-default v3.md",
+    "node_modules/@cspotcode/source-map-support/node_modules/@jridgewell/trace-mapping/README.md",
+    "node_modules/@cspotcode/source-map-support/LICENSE.md",
+    "node_modules/@cspotcode/source-map-support/README.md",
+    "node_modules/ts-node/node_modules/arg/README.md",
+    "node_modules/ts-node/node_modules/arg/LICENSE.md",
+    "node_modules/ts-node/dist-raw/README.md",
+    "node_modules/ts-node/dist-raw/NODE-LICENSE.md",
+    "s5.png",
+    "s4.png",
+    "s3.png",
+    "s2.png",
+    "s1.png"
+  ]
+}

@@ -1,0 +1,23 @@
+import { NextResponse } from 'next/server';
+import { getSupabaseRouteHandlerClient } from '../../../../lib/supabase-server';
+import { requireAdmin } from '../../../../lib/auth';
+
+export async function GET() {
+  const supabase = getSupabaseRouteHandlerClient();
+  const adminCheck = await requireAdmin(supabase);
+  if (adminCheck.error) {
+    return adminCheck.error;
+  }
+
+  const result = await supabase
+    .from('prompts')
+    .select('*')
+    .order('updated_at', { ascending: false });
+
+  if (result.error) {
+    console.error(result.error);
+    return NextResponse.json({ error: 'Kunne ikke hente promter' }, { status: 500 });
+  }
+
+  return NextResponse.json({ prompts: result.data });
+}

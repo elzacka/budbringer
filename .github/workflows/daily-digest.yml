@@ -1,0 +1,72 @@
+name: Daily Digest
+
+on:
+  schedule:
+    - cron: '30 4 * * *' # 05:30 CET / 04:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-digest
+  cancel-in-progress: false
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+  SUPABASE_SERVICE_URL: ${{ secrets.SUPABASE_SERVICE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
+  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  ENABLE_TTS: ${{ secrets.ENABLE_TTS }}
+  PIPER_VOICE: ${{ secrets.PIPER_VOICE }}
+  PIPER_BINARY: ./piper/piper
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Download Piper (optional)
+        if: env.ENABLE_TTS == 'true'
+        run: |
+          mkdir -p piper
+          curl -L https://github.com/rhasspy/piper/releases/download/v1.2.0/piper_linux_x86_64.tar.gz | tar xz -C piper --strip-components=1
+          chmod +x piper/piper
+
+      - name: Ensure output dir
+        run: mkdir -p out
+
+      - name: Generate digest
+        run: npx tsx scripts/dailyDigest.ts
+
+      - name: Upload digest artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latest-digest
+          path: out/
+          retention-days: 7
+
+      - name: Trigger dispatch worker
+        if: success()
+        env:
+          DISPATCH_URL: ${{ secrets.DISPATCH_URL }}
+          DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
+        run: |
+          curl -X POST "$DISPATCH_URL" \
+            -H "Authorization: Bearer $DISPATCH_TOKEN" \
+            -H "User-Agent: budbringer-bot" \
+            -d '{}'

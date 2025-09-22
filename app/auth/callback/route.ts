@@ -1,0 +1,21 @@
+import { NextResponse } from 'next/server';
+import { getSupabaseRouteHandlerClient } from '../../../lib/supabase-server';
+
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url);
+  const redirectTo = requestUrl.searchParams.get('redirectTo') ?? '/admin';
+  const code = requestUrl.searchParams.get('code');
+
+  if (!code) {
+    return NextResponse.redirect(`${requestUrl.origin}/admin/login?error=missing_code`);
+  }
+
+  const supabase = getSupabaseRouteHandlerClient();
+  const { error } = await supabase.auth.exchangeCodeForSession(code);
+
+  if (error) {
+    return NextResponse.redirect(`${requestUrl.origin}/admin/login?error=${error.message}`);
+  }
+
+  return NextResponse.redirect(`${requestUrl.origin}${redirectTo}`);
+}
