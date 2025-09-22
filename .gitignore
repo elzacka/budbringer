@@ -1,8 +1,5 @@
-# Bygg / output
 .next/
 out/
 .DS_Store
-EOF
-
-# Editorfiler
+.github/.DS_Store
 .obsidian/
