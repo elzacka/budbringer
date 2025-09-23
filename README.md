@@ -25,8 +25,8 @@ Fullstack-prosjekt for daglig KI-brief sendt på e-post til norske mottakere.
 
 | Variabel | Beskrivelse |
 | --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Offentlige nøkler for webapp. |
-| `SUPABASE_SERVICE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Service key brukes av API-endepunkter og cron-jobb. |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Offentlige nøkler for webapp (bruk Supabase Publishable Key). |
+| `SUPABASE_SERVICE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Service key/API key brukes av API-endepunkter og cron-jobb. |
 | `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | Minst én må settes for nattlig generering. |
 | `MAILCHANNELS_AUTH_TOKEN` | API-token fra MailChannels. |
 | `PUBLIC_SITE_URL` | Base-URL for signerte lenker. |
