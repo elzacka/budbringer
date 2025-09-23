@@ -85,10 +85,8 @@ export async function PATCH(request: Request) {
     }
   }
 
-  const result = await service
-    .from('prompts')
-    .update({ is_active: parsed.data.active })
-    .eq('id', parsed.data.id);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (service as any).from('prompts').update({ is_active: parsed.data.active }).eq('id', parsed.data.id);
 
   if (result.error) {
     console.error(result.error);

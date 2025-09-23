@@ -28,7 +28,8 @@ export async function POST(request: Request) {
   }
 
   const service = getSupabaseServiceClient();
-  const result = await service
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (service as any)
     .from('subscribers')
     .update({ status: 'unsubscribed', updated_at: new Date().toISOString() })
     .eq('email', normalizedEmail);

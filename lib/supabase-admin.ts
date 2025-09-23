@@ -16,3 +16,8 @@ export function getSupabaseServiceClient(): SupabaseClient<Database> {
     }
   });
 }
+
+// Helper function to work around TypeScript inference issues with Supabase in build environments
+export function safeSupabaseOperation<T>(operation: () => Promise<T>): Promise<T> {
+  return operation();
+}

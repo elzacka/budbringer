@@ -18,7 +18,8 @@ export async function POST(request: Request) {
   const { email } = parseResult.data;
   const normalizedEmail = email.trim().toLowerCase();
 
-  const existing = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const existing = await (supabase as any)
     .from('subscribers')
     .select('id, status')
     .eq('email', normalizedEmail)
@@ -31,7 +32,8 @@ export async function POST(request: Request) {
 
   if (existing.data) {
     if (existing.data.status !== 'confirmed') {
-      await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
         .from('subscribers')
         .update({
           status: 'confirmed',
@@ -44,7 +46,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: 'Du står allerede på listen.' }, { status: 200 });
   }
 
-  const insertResult = await supabase.from('subscribers').insert({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const insertResult = await (supabase as any).from('subscribers').insert({
     email: normalizedEmail,
     status: 'confirmed',
     source: 'form',

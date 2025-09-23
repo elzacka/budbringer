@@ -27,6 +27,7 @@ export async function POST(request: Request) {
   }
 
   const service = getSupabaseServiceClient();
+  // @ts-expect-error Supabase typing does not narrow insert payload for this client
   const result = await service.from('subscribers').insert({
     email: parsed.data.email.trim().toLowerCase(),
     status: parsed.data.status ?? 'confirmed',
@@ -58,7 +59,8 @@ export async function PATCH(request: Request) {
   }
 
   const service = getSupabaseServiceClient();
-  const result = await service
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await (service as any)
     .from('subscribers')
     .update({
       email: parsed.data.email.trim().toLowerCase(),
