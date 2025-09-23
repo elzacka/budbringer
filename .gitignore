@@ -1,6 +1,10 @@
+# Build / runtime artifacts
 .next/
-out/
-.DS_Store
-.github/.DS_Store
-.obsidian/
 node_modules/
+out/
+
+# Local environment variables
+.env.local
+
+# macOS artifacts
+.DS_Store

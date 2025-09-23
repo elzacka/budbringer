@@ -3,9 +3,9 @@ import { SubscribeForm } from '../components/SubscribeForm';
 
 const HIGHLIGHTS = [
   {
-    title: 'Kort og relevant hver morgen',
+    title: 'Kort og relevant',
     description:
-      'Budbringer filtrerer hundrevis av kilder og sender kun sakene som betyr noe for norske lesere – enten du er nysgjerrig nybegynner eller hardbarka nerd.'
+      'Hundrevis av kilder, kuratert og komprimert for norske lesere. Enten du er nysgjerrig nybegynner eller hardbarka nerd.'
   },
   {
     title: 'Forklart enkelt',
@@ -20,7 +20,7 @@ const HIGHLIGHTS = [
   {
     title: 'Personvern slik det bør være',
     description:
-      'E-postadressen din lagres sikkert innenfor EU/EØS, og du kan melde deg av når som helst med ett klikk.'
+      'E-postadressen din lagres sikkert innenfor EU, og du kan melde deg av når som helst med ett klikk.'
   }
 ];
 
@@ -46,7 +46,7 @@ export default function LandingPage() {
               Bli oppdatert på fem minutter
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-relaxed text-slate-200 md:text-xl">
-              Budbringer samler nattens viktigste KI-saker, filtrerer bort støyen og forklarer hva det betyr. Rett i innboksen før du kommer på jobb.
+              Budbringer jobber om natta for å samle de viktigste KI-sakene, filtrere bort støy og forklare hva det betyr. Du får det rett i innboksen før du kommer på jobb.
             </p>
           </div>
         </header>

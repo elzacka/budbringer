@@ -6,9 +6,9 @@ import {
 import type { Database } from '../types/database.types';
 
 export function getSupabaseServerComponentClient() {
-  return createServerComponentClient<Database>({ cookies });
+  return createServerComponentClient<Database, 'public'>({ cookies });
 }
 
 export function getSupabaseRouteHandlerClient() {
-  return createRouteHandlerClient<Database>({ cookies });
+  return createRouteHandlerClient<Database, 'public'>({ cookies });
 }
