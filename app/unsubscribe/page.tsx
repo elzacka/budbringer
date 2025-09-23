@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: 'Avmelding – Budbringer'
 };
 
+// Force dynamic rendering for this page due to searchParams usage
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   searchParams?: {
     email?: string;

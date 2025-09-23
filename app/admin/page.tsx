@@ -1,6 +1,9 @@
 import Link from 'next/link';
 import { getRecipients, getPrompts, getLatestRuns } from '../../lib/queries';
 
+// Force dynamic rendering for this page due to authentication and database queries
+export const dynamic = 'force-dynamic';
+
 export default async function AdminOverviewPage() {
   const [recipients, prompts, runs] = await Promise.all([
     getRecipients(),

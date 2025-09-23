@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: 'Logg inn – Budbringer'
 };
 
+// Force dynamic rendering for this page due to authentication
+export const dynamic = 'force-dynamic';
+
 interface LoginPageProps {
   searchParams?: {
     redirectTo?: string;
