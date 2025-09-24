@@ -29,7 +29,7 @@ export function SubscribeForm() {
     }
 
     setStatus('success');
-    setMessage('Takk! Du får første oppsummering i innboksen i morgen kl. 06.00.');
+    setMessage(payload.message || 'Takk! Din forespørsel er mottatt og avventer godkjenning.');
     setEmail('');
   };
 

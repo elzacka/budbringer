@@ -15,13 +15,27 @@ export default async function AdminOverviewPage() {
 
   return (
     <div className="space-y-8">
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Aktive mottakere</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">
             {recipients?.filter((recipient: Subscriber) => recipient.status === 'confirmed').length}
           </p>
           <p className="mt-2 text-xs text-slate-500">Totalt {recipients?.length} registrerte</p>
+        </div>
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <p className="text-sm font-medium text-slate-500">Avventer godkjenning</p>
+          <p className="mt-2 text-3xl font-semibold text-slate-900">
+            {recipients?.filter((recipient: Subscriber) => recipient.status === 'pending').length}
+          </p>
+          <div className="mt-2">
+            <Link
+              href="/admin/pending"
+              className="text-xs text-sky-600 hover:text-sky-800 underline"
+            >
+              Se forespørsler →
+            </Link>
+          </div>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Aktiv prompt</p>

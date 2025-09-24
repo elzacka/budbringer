@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 
 const links = [
   { href: '/admin', label: 'Oversikt' },
+  { href: '/admin/pending', label: 'Godkjenninger' },
   { href: '/admin/recipients', label: 'Mottakere' },
   { href: '/admin/prompts', label: 'Prompter' },
   { href: '/admin/runs', label: 'Kjøringer' }

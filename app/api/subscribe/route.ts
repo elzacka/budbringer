@@ -18,8 +18,7 @@ export async function POST(request: Request) {
   const { email } = parseResult.data;
   const normalizedEmail = email.trim().toLowerCase();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const existing = await (supabase as any)
+  const existing = await supabase
     .from('subscribers')
     .select('id, status')
     .eq('email', normalizedEmail)
@@ -31,25 +30,30 @@ export async function POST(request: Request) {
   }
 
   if (existing.data) {
-    if (existing.data.status !== 'confirmed') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any)
+    if (existing.data.status === 'unsubscribed') {
+      // Reactivate unsubscribed users as pending
+      await supabase
         .from('subscribers')
         .update({
-          status: 'confirmed',
+          status: 'pending',
           updated_at: new Date().toISOString(),
           source: 'form'
         })
         .eq('id', existing.data.id);
+
+      return NextResponse.json({ message: 'Takk! Din forespørsel er mottatt og avventer godkjenning.' }, { status: 200 });
+    }
+
+    if (existing.data.status === 'pending') {
+      return NextResponse.json({ message: 'Din forespørsel avventer allerede godkjenning.' }, { status: 200 });
     }
 
     return NextResponse.json({ message: 'Du står allerede på listen.' }, { status: 200 });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const insertResult = await (supabase as any).from('subscribers').insert({
+  const insertResult = await supabase.from('subscribers').insert({
     email: normalizedEmail,
-    status: 'confirmed',
+    status: 'pending',
     source: 'form',
     language: 'nb-NO'
   });
@@ -59,5 +63,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Kunne ikke lagre registreringen' }, { status: 500 });
   }
 
-  return NextResponse.json({ message: 'Registrert' }, { status: 201 });
+  return NextResponse.json({ message: 'Takk! Din forespørsel er mottatt og avventer godkjenning.' }, { status: 201 });
 }
