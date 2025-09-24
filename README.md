@@ -17,6 +17,7 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 - **Automation**: Daily GitHub Actions workflow for content generation
 - **Email Delivery**: Cloudflare Worker with MailChannels for reliable email sending
 - **Styling**: Tailwind CSS 3.4 for modern, responsive design
+- **Subscriber Management**: Approval workflow for new subscriber requests
 
 ## 🚀 Tech Stack
 
@@ -47,7 +48,7 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/budbringer.git
+   git clone https://github.com/elzacka/budbringer.git
    cd budbringer
    ```
 
@@ -118,6 +119,15 @@ The automated newsletter generation follows this workflow:
 4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
 5. **Delivery**: Worker fetches latest digest and sends via MailChannels
 
+### 👥 Subscriber Management
+
+New subscribers go through an approval process:
+
+1. **Subscription**: Users submit email via landing page form
+2. **Pending Status**: New subscribers get `pending` status requiring admin approval
+3. **Admin Review**: Admins approve/reject subscribers via `/admin/pending` interface
+4. **Email Delivery**: Only `confirmed` subscribers receive daily newsletters
+
 ```mermaid
 graph TD
     A[GitHub Actions<br/>Daily 05:30 CET] --> B[Fetch News Sources]
@@ -140,6 +150,14 @@ graph TD
 | `npm run lint` | Run ESLint code quality checks |
 | `npm run digest:generate` | Manually generate daily digest |
 | `npm run sources:test` | Test content source connections |
+
+### Admin Panel Features
+
+- **Dashboard** (`/admin`): Overview of subscriber stats and recent runs
+- **Pending Approvals** (`/admin/pending`): Approve/reject new subscriber requests
+- **Recipients** (`/admin/recipients`): Manage subscriber list and status
+- **Prompts** (`/admin/prompts`): Configure AI prompts with versioning
+- **Runs** (`/admin/runs`): Monitor newsletter generation history
 
 ## 🎵 TTS Features (Optional)
 
