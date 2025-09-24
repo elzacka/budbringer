@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "digest:generate": "npx tsx scripts/dailyDigest.ts",
+    "sources:test": "npx tsx scripts/test-sources.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.2",

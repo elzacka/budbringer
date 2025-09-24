@@ -159,7 +159,7 @@ async function fetchArticles(): Promise<Article[]> {
     .slice(0, 24);
 }
 
-function buildContext(articles: Article[]) {
+function buildContext(articles: Article[], currentDate: string) {
   return articles
     .map((article, index) => {
       const published = article.publishedAt
@@ -168,6 +168,36 @@ function buildContext(articles: Article[]) {
       return `${index + 1}. [${article.source}] ${article.title} (${published})\nURL: ${article.link}\nSammendrag: ${article.contentSnippet?.replace(/\s+/g, ' ').slice(0, 400)}`;
     })
     .join('\n\n');
+}
+
+function filterNorwegianAIContent(articles: Article[]): Article[] {
+  const aiKeywords = [
+    'kunstig intelligens', 'KI', 'AI', 'maskinlæring', 'machine learning',
+    'OpenAI', 'ChatGPT', 'GPT', 'Claude', 'Anthropic', 'Google AI', 'Microsoft AI',
+    'Gemini', 'Copilot', 'MetaAI', 'xAI', 'Grok', 'ElevenLabs',
+    'roboter', 'automatisering', 'digitalisering', 'algoritmer', 'nevrale nettverk',
+    'dyp læring', 'deep learning', 'neural network', 'llm', 'large language model'
+  ];
+
+  const norwegianRelevanceKeywords = [
+    'norge', 'norsk', 'skandinavisk', 'nordisk', 'oslo', 'bergen', 'trondheim',
+    'forskningsrådet', 'ntnu', 'sintef', 'uio', 'nav', 'equinor', 'telenor', 'dnb',
+    'regjeringen', 'stortinget', 'eu', 'europa'
+  ];
+
+  return articles.filter(article => {
+    const text = `${article.title} ${article.contentSnippet}`.toLowerCase();
+
+    const hasAIContent = aiKeywords.some(keyword => text.includes(keyword.toLowerCase()));
+    const hasNorwegianRelevance = norwegianRelevanceKeywords.some(keyword => text.includes(keyword)) || article.language === 'nb-NO';
+
+    // Prioritize Norwegian sources and content with Norwegian relevance
+    if (article.language === 'nb-NO') {
+      return hasAIContent; // Norwegian sources: just need AI content
+    } else {
+      return hasAIContent && (hasNorwegianRelevance || text.includes('regulation') || text.includes('policy') || text.includes('funding'));
+    }
+  });
 }
 
 function extractJson(text: string): ModelDigest {
@@ -180,21 +210,25 @@ function extractJson(text: string): ModelDigest {
   return parsed;
 }
 
-async function callAnthropic(prompt: string, context: string) {
+async function callAnthropic(prompt: string, context: string, currentDate: string) {
   const key = process.env.ANTHROPIC_API_KEY;
   if (!key) {
     return null;
   }
   const anthropic = new Anthropic({ apiKey: key });
+
+  // Inject current date into the system prompt
+  const enhancedPrompt = `${prompt}\n\nVIKTIG: Dagens dato er ${currentDate}. Bruk denne datoen når du refererer til "i dag", "i går", "denne uken" etc. Fokuser på nyheter som er relevante for norske lesere og KI-utviklingen i Norge.`;
+
   const response = await anthropic.messages.create({
     model: 'claude-3-5-sonnet-20240620',
     max_tokens: 2048,
     temperature: 0.6,
-    system: prompt,
+    system: enhancedPrompt,
     messages: [
       {
         role: 'user',
-        content: `Her er dagens nyheter:\n\n${context}\n\nLever følgende JSON-format: {"date_label": string, "lead": string, "sections": [{"heading": string, "bullets": [string], "link"?: string}], "actions"?: [string], "audio_script"?: string}`
+        content: `Her er dagens KI-nyheter (${currentDate}):\n\n${context}\n\nLever følgende JSON-format: {"date_label": string, "lead": string, "sections": [{"heading": string, "bullets": [string], "link"?: string}], "actions"?: [string], "audio_script"?: string}`
       }
     ]
   });
@@ -270,9 +304,17 @@ async function main() {
   });
   const supabase = supabaseClient as any;
 
-  const articles = await fetchArticles();
-  if (articles.length === 0) {
+  const allArticles = await fetchArticles();
+  if (allArticles.length === 0) {
     throw new Error('Fant ingen artikler – avbryter.');
+  }
+
+  // Filter for Norwegian AI-relevant content
+  const articles = filterNorwegianAIContent(allArticles);
+  logger.log(`Filtrerte ${allArticles.length} artikler ned til ${articles.length} KI-relevante artikler for norske lesere`);
+
+  if (articles.length === 0) {
+    throw new Error('Fant ingen KI-relevante artikler for norske lesere – avbryter.');
   }
 
   const newsItemPayload: NewsItemInsert[] = articles.map((article) => ({
@@ -300,13 +342,14 @@ async function main() {
     throw new Error('Ingen aktiv prompt funnet. Sett en prompt i admin-panelet.');
   }
 
-  const context = buildContext(articles);
+  const osloNow = getOsloNow();
+  const context = buildContext(articles, osloNow.dateLabel);
 
   let digest: ModelDigest | null = null;
   let modelUsed = '';
 
   try {
-    const anthropicResult = await callAnthropic(prompt.body, context);
+    const anthropicResult = await callAnthropic(prompt.body, context, osloNow.dateLabel);
     if (anthropicResult) {
       digest = anthropicResult;
       modelUsed = 'claude-3-5-sonnet';

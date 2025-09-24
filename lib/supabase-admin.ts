@@ -1,23 +1,26 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../types/database.types';
+// supabase-admin.ts
+import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_SERVICE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+/**
+ * Server-side Supabase client
+ * 
+ * Bruker SUPABASE_SECRET_KEY (ikke anon, ikke service_role).
+ * Denne nøkkelen må kun brukes på serversiden (API routes, workers, edge functions).
+ */
+export function getSupabaseServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const secretKey = process.env.SUPABASE_SECRET_KEY;
 
-export function getSupabaseServiceClient(): SupabaseClient<Database> {
-  if (!supabaseUrl || !serviceKey) {
-    throw new Error('Supabase service credentials mangler. Sett SUPABASE_SERVICE_URL og SUPABASE_SERVICE_ROLE_KEY.');
+  if (!url) {
+    throw new Error('Missing env var: NEXT_PUBLIC_SUPABASE_URL');
+  }
+  if (!secretKey) {
+    throw new Error('Missing env var: SUPABASE_SECRET_KEY');
   }
 
-  return createClient<Database, 'public'>(supabaseUrl, serviceKey, {
+  return createClient(url, secretKey, {
     auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
+      persistSession: false, // server-side: vi trenger ikke lagre session cookies
+    },
   });
-}
-
-// Helper function to work around TypeScript inference issues with Supabase in build environments
-export function safeSupabaseOperation<T>(operation: () => Promise<T>): Promise<T> {
-  return operation();
 }
