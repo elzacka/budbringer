@@ -1,51 +1,218 @@
-# Budbringer
+# 🤖 Budbringer
 
-Fullstack-prosjekt for daglig KI-brief sendt på e-post til norske mottakere.
+**AI-powered daily newsletter service for Norwegian recipients**
 
-## Innhold
+Budbringer is a fully automated AI newsletter system that generates and delivers daily AI briefings in Norwegian. Built with modern web technologies and powered by leading AI models.
 
-- Next.js-app (`app/`) for offentlig landingsside og admin-panel.
-- Supabase Postgres (schema i `supabase/migrations`) for mottakere, prompts og kjøringslogger.
-- Daglig GitHub Actions-jobb (`.github/workflows`) som henter nyheter, kjører KI-modell og lagrer resultat.
-- Cloudflare Worker (`workers/email-dispatcher.ts`) som sender e-post via MailChannels gratisnivået.
+[![Built with Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?logo=next.js)](https://nextjs.org/)
+[![React 19](https://img.shields.io/badge/React-19.1.1-blue?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-2.57.4-green?logo=supabase)](https://supabase.com/)
 
-## Kom i gang lokalt
+## 🏗️ Architecture
 
-1. Installer Node 20 og npm.
-2. Kopier `.env.example` til `.env.local` og fyll inn Supabase-prosjektet ditt. For lokal utvikling kan du bruke supabase CLI.
-3. Kjør `npm install`.
-4. Kjør `npm run dev` for å starte Next.js.
+- **Frontend**: Next.js 15 app with React 19 for public landing page and admin panel
+- **Database**: Supabase PostgreSQL with migrations for subscribers, prompts, and run logs
+- **AI Models**: Anthropic Claude 4 and OpenAI GPT for content generation
+- **Automation**: Daily GitHub Actions workflow for content generation
+- **Email Delivery**: Cloudflare Worker with MailChannels for reliable email sending
+- **Styling**: Tailwind CSS 3.4 for modern, responsive design
 
-### Tilkobling til Supabase
+## 🚀 Tech Stack
 
-- Kjør migrasjonene ved hjelp av Supabase CLI: `supabase db push` eller `supabase migration up`.
-- Marker admin-brukere med `app_metadata.roles = ['admin']` i Supabase Auth.
+| Category | Technology | Version | Purpose |
+|----------|------------|---------|---------|
+| **Frontend** | Next.js | 15.5.4 | React framework with App Router |
+| **UI Library** | React | 19.1.1 | Component library |
+| **Language** | TypeScript | 5.9.2 | Type-safe development |
+| **Database** | Supabase | 2.57.4 | PostgreSQL with real-time features |
+| **Auth** | Supabase SSR | 0.7.0 | Server-side authentication |
+| **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS framework |
+| **AI Models** | Anthropic SDK | 0.63.1 | Claude 4 integration |
+| **AI Models** | OpenAI SDK | 5.23.0 | GPT integration |
+| **Email** | MailChannels | - | Transactional email delivery |
+| **Deployment** | Cloudflare Workers | - | Serverless email dispatcher |
+| **Linting** | ESLint | 9.36.0 | Code quality and consistency |
 
-### Viktige `env`
+## 🏁 Getting Started
 
-| Variabel | Beskrivelse |
-| --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Offentlige nøkler for webapp (bruk Supabase Publishable Key). |
-| `SUPABASE_SERVICE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | Service key/API key brukes av API-endepunkter og cron-jobb. |
-| `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` | Minst én må settes for nattlig generering. |
-| `MAILCHANNELS_AUTH_TOKEN` | API-token fra MailChannels. |
-| `PUBLIC_SITE_URL` | Base-URL for signerte lenker. |
-| `UNSUBSCRIBE_SECRET` | Hemmelig nøkkel for signerte avmeldingslenker. |
+### Prerequisites
 
-## Produksjonsflyt
+- **Node.js**: 22.x LTS (recommended) or 20.x
+- **npm**: Latest version
+- **Supabase Account**: For database and authentication
+- **API Keys**: Anthropic and/or OpenAI for AI generation
 
-1. GitHub Action kjøres 05:30 CET, genererer oppsummering via `scripts/dailyDigest.ts`.
-2. Resultat lagres i `digest_runs` og eventuelt `news_items`.
-3. Action trigger Cloudflare Worker (`workers/email-dispatcher.ts`) via hemmelig webhook.
-4. Worker henter siste `digest_run`, rendrer e-post og sender ut via MailChannels.
+### Local Development
 
-## TTS-utvidelse
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/budbringer.git
+   cd budbringer
+   ```
 
-- Sett `ENABLE_TTS=true` og `PIPER_VOICE` i GitHub secrets for å aktivere piper-baserte lydfiler.
-- Lyd lagres i Supabase Storage (bucket `digests`) og lenke legges ved i e-poster.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## Videre arbeid
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env.local
+   # Fill in your Supabase project details and API keys
+   ```
 
-- Implementer preferanser per mottaker (temaer, format).
-- Legg til Slack/Teams-integrasjon for alternative leveransekanaler.
-- Overvåk workflows med f.eks. Better Uptime eller GitHub Checks.
+4. **Database Setup**
+   ```bash
+   # Using Supabase CLI (recommended)
+   supabase db push
+
+   # Or run migrations manually
+   supabase migration up
+   ```
+
+5. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
+
+The application will be available at `http://localhost:3000`.
+
+### Admin Setup
+
+To access the admin panel, mark admin users in Supabase Auth:
+```sql
+UPDATE auth.users
+SET app_metadata = '{"roles": ["admin"]}'::jsonb
+WHERE email = 'your-admin-email@example.com';
+```
+
+## ⚙️ Environment Variables
+
+Create `.env.local` with the following variables:
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | ✅ |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable/anon key | ✅ |
+| `SUPABASE_SERVICE_URL` | Supabase project URL (same as above) | ✅ |
+| `SUPABASE_SECRET_KEY` | Supabase secret/service role key | ✅ |
+| `ANTHROPIC_API_KEY` | Anthropic Claude API key | ⚠️* |
+| `OPENAI_API_KEY` | OpenAI GPT API key | ⚠️* |
+| `MAILCHANNELS_AUTH_TOKEN` | MailChannels API token | ✅ |
+| `PUBLIC_SITE_URL` | Base URL for signed links | ✅ |
+| `UNSUBSCRIBE_SECRET` | Secret key for signed unsubscribe links | ✅ |
+| `DISPATCH_TOKEN` | Secret token for webhook security | ✅ |
+| `ENABLE_TTS` | Enable text-to-speech features (`true`/`false`) | ❌ |
+| `PIPER_VOICE` | Piper voice model for TTS | ❌ |
+
+*At least one AI API key (Anthropic or OpenAI) is required for content generation.
+
+## 🔄 Production Workflow
+
+The automated newsletter generation follows this workflow:
+
+1. **Daily Trigger**: GitHub Actions workflow runs at 05:30 CET
+2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using AI
+3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables
+4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
+5. **Delivery**: Worker fetches latest digest and sends via MailChannels
+
+```mermaid
+graph TD
+    A[GitHub Actions<br/>Daily 05:30 CET] --> B[Fetch News Sources]
+    B --> C[AI Processing<br/>Claude/GPT]
+    C --> D[Store in Supabase<br/>digest_runs table]
+    D --> E[Trigger Webhook]
+    E --> F[Cloudflare Worker]
+    F --> G[Render Email Template]
+    G --> H[Send via MailChannels]
+    H --> I[Delivered to Subscribers]
+```
+
+## 📊 Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build production application |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint code quality checks |
+| `npm run digest:generate` | Manually generate daily digest |
+| `npm run sources:test` | Test content source connections |
+
+## 🎵 TTS Features (Optional)
+
+Enable text-to-speech generation for audio newsletters:
+
+1. Set `ENABLE_TTS=true` in GitHub Secrets
+2. Configure `PIPER_VOICE` with desired voice model (e.g., `nb_NO-karlsen-medium`)
+3. Audio files are stored in Supabase Storage (`digests` bucket)
+4. Links automatically included in email newsletters
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+
+1. Connect your GitHub repository to Vercel
+2. Configure environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
+
+### Cloudflare Workers
+
+The email dispatcher runs on Cloudflare Workers:
+
+1. Deploy `workers/email-dispatcher.js` to Cloudflare
+2. Configure environment variables
+3. Update webhook URL in GitHub Actions
+
+## 🔐 Security
+
+- All API keys stored as environment variables
+- Signed unsubscribe links with HMAC verification
+- Admin access controlled via Supabase RLS policies
+- Webhook authentication with secure tokens
+
+## 🛠️ Development
+
+### Database Migrations
+
+New migrations go in `supabase/migrations/`:
+```bash
+# Create new migration
+supabase migration new your_migration_name
+
+# Apply migrations
+supabase db push
+```
+
+### Adding New AI Prompts
+
+1. Use admin panel at `/admin/prompts`
+2. Create new prompt with versioning
+3. Set as active for next generation cycle
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ✨ Roadmap
+
+- [ ] Per-subscriber preferences (topics, frequency, format)
+- [ ] Slack/Teams integration for alternative delivery channels
+- [ ] Advanced analytics and engagement tracking
+- [ ] Multi-language support beyond Norwegian
+- [ ] RSS feed generation
+- [ ] Mobile app for content management
+
+---
+
+**Built with ❤️ for the Norwegian AI community**

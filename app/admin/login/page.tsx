@@ -11,19 +11,20 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 interface LoginPageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     redirectTo?: string;
-  };
+  }>;
 }
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
-  const supabase = getSupabaseServerComponentClient();
+  const resolvedSearchParams = await searchParams;
+  const supabase = await getSupabaseServerComponentClient();
   const {
     data: { session }
   } = await supabase.auth.getSession();
 
   if (session) {
-    redirect(searchParams?.redirectTo ?? '/admin');
+    redirect(resolvedSearchParams?.redirectTo ?? '/admin');
   }
 
   return (
@@ -33,7 +34,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <p className="mt-3 max-w-md text-sm text-slate-300">
           Logg inn med e-postadressen som er registrert som admin. Vi bruker passordløs innlogging og TOTP via Supabase.
         </p>
-        <AuthMagicLink redirectTo={searchParams?.redirectTo} />
+        <AuthMagicLink redirectTo={resolvedSearchParams?.redirectTo} />
       </div>
     </section>
   );

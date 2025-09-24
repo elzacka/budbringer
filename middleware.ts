@@ -1,11 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import type { Database } from './types/database.types';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
-  const supabase = createMiddlewareClient<Database>({ req: request, res: response });
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(key: string) {
+          return request.cookies.get(key)?.value;
+        },
+        set(key: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name: key,
+            value,
+            ...options,
+          });
+          response.cookies.set({
+            name: key,
+            value,
+            ...options,
+          });
+        },
+        remove(key: string, options: CookieOptions) {
+          request.cookies.set({
+            name: key,
+            value: '',
+            ...options,
+          });
+          response.cookies.set({
+            name: key,
+            value: '',
+            ...options,
+          });
+        },
+      },
+    }
+  );
 
   if (request.nextUrl.pathname.startsWith('/admin')) {
     const {

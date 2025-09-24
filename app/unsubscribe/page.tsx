@@ -10,15 +10,16 @@ export const metadata: Metadata = {
 export const dynamic = 'force-dynamic';
 
 interface PageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     email?: string;
     signature?: string;
-  };
+  }>;
 }
 
-export default function UnsubscribePage({ searchParams }: PageProps) {
-  const email = searchParams?.email;
-  const signature = searchParams?.signature;
+export default async function UnsubscribePage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const email = resolvedSearchParams?.email;
+  const signature = resolvedSearchParams?.signature;
 
   if (!email || !signature) {
     redirect('/');

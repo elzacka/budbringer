@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getLatestRuns } from '../../../lib/queries';
+import { getLatestRuns, type DigestRun } from '../../../lib/queries';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +13,7 @@ export default async function RunsPage() {
         <p className="text-sm text-slate-500">Operasjonell logg over nattlige jobber.</p>
       </header>
       <div className="space-y-4">
-        {runs.map((run) => (
+        {runs?.map((run: DigestRun) => (
           <article key={run.id} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -50,7 +50,7 @@ export default async function RunsPage() {
             )}
           </article>
         ))}
-        {runs.length === 0 && <p className="text-sm text-slate-500">Ingen kjøringer registrert ennå.</p>}
+        {(!runs || runs.length === 0) && <p className="text-sm text-slate-500">Ingen kjøringer registrert ennå.</p>}
       </div>
     </section>
   );

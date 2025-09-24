@@ -13,7 +13,7 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${requestUrl.origin}/admin/login?error=missing_code`);
   }
 
-  const supabase = getSupabaseRouteHandlerClient();
+  const supabase = await getSupabaseRouteHandlerClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {

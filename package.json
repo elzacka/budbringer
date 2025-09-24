@@ -11,32 +11,33 @@
     "sources:test": "npx tsx scripts/test-sources.ts"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.2",
-    "@supabase/auth-helpers-nextjs": "^0.10.0",
-    "@supabase/supabase-js": "^2.43.3",
+    "@anthropic-ai/sdk": "^0.63.1",
+    "@supabase/ssr": "^0.7.0",
+    "@supabase/supabase-js": "^2.57.4",
     "cheerio": "^1.0.0-rc.12",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.2",
-    "next": "^14.2.5",
-    "openai": "^4.47.3",
+    "next": "^15.5.4",
+    "openai": "^5.23.0",
     "p-limit": "^5.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "rss-parser": "^3.13.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14.2.5",
+    "eslint": "^9.36.0",
+    "eslint-config-next": "^15.5.4",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.2"
   }
 }

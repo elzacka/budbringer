@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ prompts: data });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Route handler error (GET prompts):', err);
     return NextResponse.json({ error: 'Uventet feil ved henting av prompts' }, { status: 500 });
   }
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ message: 'Ny prompt opprettet og aktivert', prompt: data });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Route handler error (POST prompt):', err);
     return NextResponse.json({ error: 'Uventet feil ved oppretting av prompt' }, { status: 500 });
   }

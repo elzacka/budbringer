@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ recipients: data });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Route handler error (GET recipients):', err);
     return NextResponse.json({ error: 'Uventet feil ved henting av recipients' }, { status: 500 });
   }
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ message: 'Recipient opprettet', recipient: data });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Route handler error (POST recipient):', err);
     return NextResponse.json({ error: 'Uventet feil ved oppretting av recipient' }, { status: 500 });
   }

@@ -12,7 +12,7 @@ export default async function RecipientsPage() {
         <h1 className="text-2xl font-semibold text-slate-900">Mottakere</h1>
         <p className="text-sm text-slate-500">Legg til, fjern og hold oversikt over abonnenter.</p>
       </div>
-      <RecipientManager initialRecipients={recipients} />
+      <RecipientManager initialRecipients={recipients || []} />
     </section>
   );
 }

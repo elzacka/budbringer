@@ -1,8 +1,8 @@
 import { getSupabaseServerComponentClient } from './supabase-server';
 import type { Database } from '../types/database.types';
 
-export async function getRecipients() {
-  const supabase = getSupabaseServerComponentClient();
+export async function getRecipients(): Promise<Subscriber[] | null> {
+  const supabase = await getSupabaseServerComponentClient();
   const { data, error } = await supabase.from('subscribers').select('*').order('created_at', { ascending: false });
   if (error) {
     throw error;
@@ -10,8 +10,8 @@ export async function getRecipients() {
   return data;
 }
 
-export async function getPrompts() {
-  const supabase = getSupabaseServerComponentClient();
+export async function getPrompts(): Promise<Prompt[] | null> {
+  const supabase = await getSupabaseServerComponentClient();
   const { data, error } = await supabase.from('prompts').select('*').order('updated_at', { ascending: false });
   if (error) {
     throw error;
@@ -19,8 +19,8 @@ export async function getPrompts() {
   return data;
 }
 
-export async function getLatestRuns(limit = 10) {
-  const supabase = getSupabaseServerComponentClient();
+export async function getLatestRuns(limit = 10): Promise<DigestRun[] | null> {
+  const supabase = await getSupabaseServerComponentClient();
   const { data, error } = await supabase
     .from('digest_runs')
     .select('*')

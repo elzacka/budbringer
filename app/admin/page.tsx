@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getRecipients, getPrompts, getLatestRuns } from '../../lib/queries';
+import { getRecipients, getPrompts, getLatestRuns, type Subscriber, type Prompt, type DigestRun } from '../../lib/queries';
 
 // Force dynamic rendering for this page due to authentication and database queries
 export const dynamic = 'force-dynamic';
@@ -11,7 +11,7 @@ export default async function AdminOverviewPage() {
     getLatestRuns(5)
   ]);
 
-  const activePrompt = prompts.find((prompt) => prompt.is_active);
+  const activePrompt = prompts?.find((prompt: Prompt) => prompt.is_active);
 
   return (
     <div className="space-y-8">
@@ -19,9 +19,9 @@ export default async function AdminOverviewPage() {
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Aktive mottakere</p>
           <p className="mt-2 text-3xl font-semibold text-slate-900">
-            {recipients.filter((recipient) => recipient.status === 'confirmed').length}
+            {recipients?.filter((recipient: Subscriber) => recipient.status === 'confirmed').length}
           </p>
-          <p className="mt-2 text-xs text-slate-500">Totalt {recipients.length} registrerte</p>
+          <p className="mt-2 text-xs text-slate-500">Totalt {recipients?.length} registrerte</p>
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Aktiv prompt</p>
@@ -30,10 +30,10 @@ export default async function AdminOverviewPage() {
         </div>
         <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Siste kjøring</p>
-          {runs.length > 0 ? (
+          {runs && runs.length > 0 ? (
             <div className="mt-2 text-sm text-slate-600">
-              <p>Status: <span className="font-semibold">{runs[0].status}</span></p>
-              <p>Dato: {new Date(runs[0].created_at).toLocaleString('no-NO')}</p>
+              <p>Status: <span className="font-semibold">{runs[0]?.status}</span></p>
+              <p>Dato: {runs[0]?.created_at ? new Date(runs[0].created_at).toLocaleString('no-NO') : 'N/A'}</p>
             </div>
           ) : (
             <p className="mt-2 text-sm text-slate-500">Ingen kjøringer ennå.</p>
@@ -52,7 +52,7 @@ export default async function AdminOverviewPage() {
           </Link>
         </header>
         <div className="mt-6 space-y-4">
-          {runs.map((run) => (
+          {runs?.map((run: DigestRun) => (
             <article
               key={run.id}
               className="rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"

@@ -3,7 +3,7 @@ import { getSupabaseRouteHandlerClient } from '../../../../lib/supabase-server';
 import { requireAdmin } from '../../../../lib/auth';
 
 export async function GET() {
-  const supabase = getSupabaseRouteHandlerClient();
+  const supabase = await getSupabaseRouteHandlerClient();
   const adminCheck = await requireAdmin(supabase);
   if (adminCheck.error) {
     return adminCheck.error;
