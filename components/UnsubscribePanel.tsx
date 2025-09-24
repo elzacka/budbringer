@@ -35,7 +35,7 @@ export function UnsubscribePanel({ email, signature }: Props) {
   };
 
   return (
-    <div className="max-w-xl space-y-4 rounded-2xl border border-slate-800 bg-slate-900/80 p-6 text-slate-100">
+    <div className="max-w-xl space-y-6 rounded-2xl border border-slate-800 bg-slate-900/80 p-8 text-slate-100">
       <p className="text-sm text-slate-300">
         {status === 'done'
           ? 'Du vil ikke motta flere oppsummeringer. Takk for at du prøvde Budbringer!'

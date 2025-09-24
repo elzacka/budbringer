@@ -3,14 +3,14 @@ import { SubscribeForm } from '../components/SubscribeForm';
 
 const HIGHLIGHTS = [
   {
-    title: 'Kort og relevant',
+    title: 'Kort og nyttig',
     description:
-      'Hundrevis av kilder, kuratert og komprimert for norske lesere. Enten du er nysgjerrig nybegynner eller hardbarka nerd.'
+      'Mangfoldige kilder, kuratert og komprimert for norske lesere. Enten du er nysgjerrig nybegynner eller hardbarka nerd.'
   },
   {
     title: 'Forklart enkelt',
     description:
-      'Få ting forklart i et språk alle forstår, med lenker til fordypning når du trenger flere detaljer.'
+      'Få ting forklart i et språk alle forstår og lenker til mer info hvis du vil gå i dybden'
   },
   {
     title: 'Troverdige kilder',
@@ -18,9 +18,9 @@ const HIGHLIGHTS = [
       'Redaktørstyrte medier, forskningsmiljøer og seriøse tech-kilder fra inn- og utland gir deg et balansert nyhetsbilde.'
   },
   {
-    title: 'Personvern slik det bør være',
+    title: 'Ingen tull med personvernet',
     description:
-      'E-postadressen din lagres sikkert innenfor EU, og du kan melde deg av når som helst med ett klikk.'
+      'Vi lagrer e-posten din trygt innenfor EU, og du kan melde deg av når som helst.'
   }
 ];
 
@@ -28,17 +28,17 @@ export default function LandingPage() {
   return (
     <section className="relative isolate overflow-hidden">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(56,182,255,0.28),_transparent_60%),radial-gradient(circle_at_bottom,_rgba(37,99,235,0.22),_transparent_58%)]" />
-      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center gap-14 px-6 py-16 text-center sm:px-10 lg:px-16">
-        <header className="space-y-6">
+      <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center justify-center gap-16 px-6 py-16 text-center sm:px-10 lg:px-16">
+        <header className="space-y-8">
           <Image
-            src="/budbringer-logo.png"
+            src="/budbringer-logo.svg"
             alt="Budbringer"
             width={360}
             height={140}
             priority
-            className="mx-auto h-28 w-auto drop-shadow-[0_35px_90px_rgba(56,182,255,0.35)]"
+            className="mx-auto h-28 w-auto"
           />
-          <div className="space-y-4">
+          <div className="space-y-6">
             <span className="inline-flex items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-1 text-xs font-semibold uppercase tracking-[0.22em] text-sky-100">
               Daglig KI-brief
             </span>
@@ -46,14 +46,14 @@ export default function LandingPage() {
               Bli oppdatert på fem minutter
             </h1>
             <p className="mx-auto max-w-3xl text-lg leading-relaxed text-slate-200 md:text-xl">
-              Budbringer jobber om natta for å samle de viktigste KI-sakene, filtrere bort støy og forklare hva det betyr. Du får det rett i innboksen før du kommer på jobb.
+              Budbringer jobber om natta for å samle de viktigste KI-nyhetene, filtrere bort støy og forklare hva det betyr. Du får det rett i innboksen før du kommer på jobb.
             </p>
           </div>
         </header>
 
         <SubscribeForm />
 
-        <div className="grid w-full max-w-4xl gap-4 sm:grid-cols-2">
+        <div className="grid w-full max-w-4xl gap-6 sm:grid-cols-2">
           {HIGHLIGHTS.map((item) => (
             <div
               key={item.title}
@@ -65,7 +65,7 @@ export default function LandingPage() {
           ))}
         </div>
 
-        <footer className="mt-2 space-y-1 text-sm text-slate-300">
+        <footer className="space-y-2 text-sm text-slate-300">
           <p>Sett av fem minutter i morgen tidlig – Budbringer gjør resten.</p>
         </footer>
       </div>

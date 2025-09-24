@@ -35,10 +35,10 @@ export function SubscribeForm() {
 
   return (
     <form
-      className="mt-6 w-full max-w-lg space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_22px_50px_rgba(15,23,42,0.55)] backdrop-blur mx-auto"
+      className="w-full max-w-lg space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_22px_50px_rgba(15,23,42,0.55)] backdrop-blur mx-auto"
       onSubmit={handleSubmit}
     >
-      <div className="grid gap-3 sm:grid-cols-[2fr_1fr]">
+      <div className="grid gap-4 sm:grid-cols-[2fr_1fr]">
         <input
           id="email"
           name="email"
@@ -66,9 +66,6 @@ export function SubscribeForm() {
           {message}
         </p>
       )}
-      <p className="text-xs leading-relaxed text-slate-400">
-        Vi sender kun én e-post om dagen. Du kan melde deg av når som helst med et klikk.
-      </p>
     </form>
   );
 }

@@ -8,7 +8,7 @@ export default async function PendingPage() {
   const pendingRecipients = recipients?.filter(recipient => recipient.status === 'pending') || [];
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold text-slate-900">Ventende godkjenninger</h1>
         <p className="text-sm text-slate-500">

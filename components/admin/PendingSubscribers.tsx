@@ -70,9 +70,9 @@ export function PendingSubscribers({ pendingSubscribers }: PendingSubscribersPro
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {message && (
-        <div className={`rounded-lg p-4 ${message.includes('Feil') ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'}`}>
+        <div className={`rounded-lg p-6 ${message.includes('Feil') ? 'bg-rose-50 text-rose-700' : 'bg-emerald-50 text-emerald-700'}`}>
           {message}
         </div>
       )}

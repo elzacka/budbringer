@@ -27,7 +27,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
 
   return (
     <section className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-24">
-      <div className="space-y-6 text-center">
+      <div className="space-y-8 text-center">
         <h1 className="text-3xl font-semibold text-slate-50">Avslutt abonnement</h1>
         <UnsubscribePanel email={email} signature={signature} />
       </div>

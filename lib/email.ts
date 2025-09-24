@@ -13,7 +13,7 @@ interface DigestEmailPayload {
 }
 
 const PUBLIC_BASE_URL = process.env.PUBLIC_SITE_URL ? process.env.PUBLIC_SITE_URL.replace(/\/$/, '') : '';
-const LOGO_PATH = '/budbringer-logo.png';
+const LOGO_PATH = '/budbringer-logo.svg';
 const LOGO_URL = PUBLIC_BASE_URL ? `${PUBLIC_BASE_URL}${encodeURI(LOGO_PATH)}` : null;
 
 export function renderDigestHtml({ dateLabel, lead, sections, actions, audioUrl }: DigestEmailPayload) {

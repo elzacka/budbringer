@@ -7,7 +7,7 @@ export default async function RecipientsPage() {
   const recipients = await getRecipients();
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold text-slate-900">Mottakere</h1>
         <p className="text-sm text-slate-500">Legg til, fjern og hold oversikt over abonnenter.</p>
