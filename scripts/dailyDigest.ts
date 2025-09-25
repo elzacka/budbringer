@@ -52,7 +52,7 @@ export async function generateDailyDigest() {
   }
 
   // Generer digest med KI-modellen
-  const { content: digestContent, runId } = await generateDigestWithAI(prompt.body);
+  const { content: digestContent, runId } = await generateDigestWithAI(prompt.body, prompt.id);
   console.log('Generert digest basert på prompt:', prompt.id, 'Run ID:', runId);
 
   // Send epost til alle mottakere
