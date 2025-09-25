@@ -13,24 +13,26 @@ export interface Database {
         Row: {
           id: string;
           email: string;
-          status: 'pending' | 'confirmed' | 'unsubscribed';
+          status: 'pending' | 'confirmed' | 'unsubscribed' | 'rejected';
           created_at: string;
           updated_at: string;
           source: 'form' | 'admin';
           language: 'nb-NO';
           preferences: Json | null;
           last_sent_at: string | null;
+          notes: string | null;
         };
         Insert: {
           id?: string;
           email: string;
-          status?: 'pending' | 'confirmed' | 'unsubscribed';
+          status?: 'pending' | 'confirmed' | 'unsubscribed' | 'rejected';
           created_at?: string;
           updated_at?: string;
           source?: 'form' | 'admin';
           language?: 'nb-NO';
           preferences?: Json | null;
           last_sent_at?: string | null;
+          notes?: string | null;
         };
         Update: Partial<Database['public']['Tables']['subscribers']['Insert']>;
       };
