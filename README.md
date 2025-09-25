@@ -128,6 +128,16 @@ New subscribers go through an approval process:
 3. **Admin Review**: Admins approve/reject subscribers via `/admin/pending` interface
 4. **Email Delivery**: Only `confirmed` subscribers receive daily newsletters
 
+### 📧 Unsubscribe System
+
+Automated unsubscribe handling for GDPR compliance:
+
+1. **Secure Links**: Newsletter contains signed unsubscribe link with HMAC verification
+2. **Automatic Processing**: Click processes unsubscribe immediately in database
+3. **External Redirect**: Users redirected to external website with confirmation
+4. **Data Transparency**: Comprehensive information about data storage and handling
+5. **API Integration**: External website can query subscription status and data locations
+
 ```mermaid
 graph TD
     A[GitHub Actions<br/>Daily 05:30 CET] --> B[Fetch News Sources]
@@ -154,10 +164,18 @@ graph TD
 ### Admin Panel Features
 
 - **Dashboard** (`/admin`): Overview of subscriber stats and recent runs
-- **Pending Approvals** (`/admin/pending`): Approve/reject new subscriber requests
-- **Recipients** (`/admin/recipients`): Manage subscriber list and status
+- **Pending Approvals** (`/admin/pending`): Approve/reject new subscriber requests with comments
+- **Recipients** (`/admin/recipients`): Manage subscriber list, status, and deletions
 - **Prompts** (`/admin/prompts`): Configure AI prompts with versioning
 - **Runs** (`/admin/runs`): Monitor newsletter generation history
+
+### Privacy & GDPR Compliance
+
+- **Transparent Data Handling**: Complete documentation of data storage across all systems
+- **External Website Integration**: API endpoints for subscription verification and data details
+- **Secure Unsubscribe**: HMAC-signed links prevent tampering and unauthorized unsubscribes
+- **Data Location Transparency**: Clear information about EU data storage and retention policies
+- **User Rights Support**: Access, rectification, and deletion rights fully supported
 
 ## 🎵 TTS Features (Optional)
 
