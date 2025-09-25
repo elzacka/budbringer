@@ -18,7 +18,7 @@ export default async function RunsPage() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-slate-900">
-                  {new Date(run.created_at).toLocaleString('no-NO')}
+                  {new Date(run.created_at).toLocaleString('no-NO', { timeZone: 'Europe/Oslo' })}
                 </p>
                 <p className="text-xs text-slate-500">Model: {run.model_used ?? '–'} | Prompt: {run.prompt_id ?? '–'}</p>
               </div>

@@ -1,5 +1,6 @@
 import { generateContent, AIResponse } from './ai';
 import { NewsItem } from './news-fetcher';
+import { formatNorwegianDate } from './timezone';
 
 export interface DigestContent {
   dateLabel: string;
@@ -19,12 +20,7 @@ export interface ProcessingResult {
 }
 
 export function buildPrompt(newsItems: NewsItem[], editorPrompt: string, templateConfig: Record<string, unknown>): string {
-  const today = new Date().toLocaleDateString('no-NO', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const today = formatNorwegianDate();
 
   const articlesText = newsItems.map((item, index) => {
     return `${index + 1}. "${item.title}" (${item.source})
@@ -95,12 +91,7 @@ export async function processNewsIntoDigest(
     // Return fallback content if no news
     return {
       content: {
-        dateLabel: new Date().toLocaleDateString('no-NO', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }),
+        dateLabel: formatNorwegianDate(),
         lead: 'I dag har vi ikke funnet nye KI-nyheter som møter våre kriterier. Vi fortsetter å overvåke situasjonen.',
         sections: [{
           heading: 'Status',

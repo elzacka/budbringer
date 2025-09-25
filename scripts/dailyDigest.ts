@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { getSupabaseServiceClient } from '../lib/supabase-admin';
 import { generateDigestWithAI } from './digestGenerator';
 import { sendDigestEmail } from './mailer';
+import { formatNorwegianDateTime } from '../lib/timezone';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -13,9 +14,7 @@ export async function generateDailyDigest() {
   const supabase = getSupabaseServiceClient();
 
   // Starttidspunkt (Oslo-tid)
-  const osloNowStart = new Date().toLocaleString('no-NO', {
-    timeZone: 'Europe/Oslo',
-  });
+  const osloNowStart = formatNorwegianDateTime();
   console.log('Starter generering av daily digest:', osloNowStart);
 
   // Hent aktive mottakere (confirmed subscribers)
@@ -73,9 +72,7 @@ export async function generateDailyDigest() {
   console.log(`📊 Sammendrag: ${sentCount} sendt, ${failedCount} feilet av ${recipients.length} totalt`);
 
   // Sluttidspunkt (Oslo-tid)
-  const osloNowEnd = new Date().toLocaleString('no-NO', {
-    timeZone: 'Europe/Oslo',
-  });
+  const osloNowEnd = formatNorwegianDateTime();
   console.log('Ferdig generert og sendt daily digest:', osloNowEnd);
 }
 

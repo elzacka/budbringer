@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getSupabaseServiceClient } from '../../lib/supabase-admin';
 import { verifySignature } from '../../lib/unsubscribe';
+import { getNowOsloISO } from '../../lib/timezone';
 
 export const metadata: Metadata = {
   title: 'Avmelding – Budbringer'
@@ -43,7 +44,7 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
     const service = getSupabaseServiceClient();
     await service
       .from('subscribers')
-      .update({ status: 'unsubscribed', updated_at: new Date().toISOString() })
+      .update({ status: 'unsubscribed', updated_at: getNowOsloISO() })
       .eq('email', normalizedEmail);
 
     // Successful unsubscribe - redirect to your external page

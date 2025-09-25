@@ -4,6 +4,7 @@ import { renderDigestHtml, renderDigestText } from '../lib/email';
 import { fetchNewsFromSources, storeContentItems, fetchRSSFeed, filterRelevantNews } from '../lib/news-fetcher';
 import { processNewsIntoDigest } from '../lib/content-processor';
 import { getAvailableModels } from '../lib/ai';
+import { getTodayOslo, getNowOsloISO } from '../lib/timezone';
 
 // Fallback news sources when pipeline is not available
 async function fetchFallbackNews() {
@@ -116,7 +117,7 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
   console.log(`Using pipeline: ${pipeline.name} (ID: ${pipeline.id})`);
 
   // Create a digest run record
-  const today = new Date().toISOString().split('T')[0];
+  const today = getTodayOslo();
   const modelName = availableModels.claude ? 'claude-sonnet-4-20250514' : 'gpt-4o';
 
   // Create digest run - handle missing columns gracefully
@@ -124,7 +125,7 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
     executed_for: today,
     status: 'pending',
     model_used: modelName,
-    created_at: new Date().toISOString()
+    created_at: getNowOsloISO()
   };
 
   // Add optional fields if they exist in the database
@@ -197,7 +198,7 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
       status: 'success',
       summary_plain: textContent,
       summary_html: htmlContent,
-      updated_at: new Date().toISOString()
+      updated_at: getNowOsloISO()
     };
 
     // Add metrics if columns exist (graceful degradation)
@@ -238,7 +239,7 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
       .update({
         status: 'failed',
         error: error instanceof Error ? error.message : 'Unknown error',
-        updated_at: new Date().toISOString()
+        updated_at: getNowOsloISO()
       })
       .eq('id', run.id);
 

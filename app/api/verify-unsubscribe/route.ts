@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getNowOsloISO } from '../../../lib/timezone';
 
 /**
  * Simple endpoint that your external website can call to verify unsubscribe status
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
     success: true,
     message: 'Unsubscribe process completed',
     email: email,
-    timestamp: new Date().toISOString(),
+    timestamp: getNowOsloISO(),
     data_removal_info: {
       immediate_actions: [
         'Email address marked as unsubscribed in Budbringer database',

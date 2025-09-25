@@ -1,5 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import { getSupabaseServiceClient } from './supabase-admin';
+import { getDaysAgoOslo, getNowOsloISO, parseOsloDate } from './timezone';
 
 export interface NewsItem {
   title: string;
@@ -61,11 +62,12 @@ export async function fetchRSSFeed(url: string): Promise<NewsItem[]> {
 
     return itemArray.map((item: Record<string, unknown>): NewsItem => {
       // Handle different date formats
-      let publishedDate = item.pubDate || item.published || item['dc:date'] || new Date().toISOString();
+      let publishedDate = item.pubDate || item.published || item['dc:date'] || getNowOsloISO();
 
       // Convert to ISO string if needed
       if (typeof publishedDate === 'string' && !publishedDate.includes('T')) {
-        publishedDate = new Date(publishedDate).toISOString();
+        const parsedDate = parseOsloDate(publishedDate);
+        publishedDate = parsedDate.toISOString();
       }
 
       const title = (item.title as Record<string, unknown>)?.['#text'] || item.title || 'No Title';
@@ -100,8 +102,7 @@ export async function filterRelevantNews(items: NewsItem[], filterConfig: Record
     return items;
   }
 
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - maxAgeDays);
+  const cutoffDate = getDaysAgoOslo(maxAgeDays);
 
   return items.filter(item => {
     // Check age
@@ -248,7 +249,7 @@ export async function storeContentItems(pipelineId: number, items: NewsItem[]): 
     published_at: item.published_at,
     source_name: item.source,
     category: item.category,
-    processed_at: new Date().toISOString()
+    processed_at: getNowOsloISO()
   }));
 
   // Insert items, ignoring duplicates

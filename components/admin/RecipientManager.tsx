@@ -113,7 +113,7 @@ export function RecipientManager({ initialRecipients }: Props) {
                 <td className="px-4 py-3 font-medium text-slate-800">{recipient.email}</td>
                 <td className="px-4 py-3 text-slate-600">{statusLabels[recipient.status] || recipient.status}</td>
                 <td className="px-4 py-3 text-slate-500">
-                  {recipient.last_sent_at ? new Date(recipient.last_sent_at).toLocaleString('no-NO') : 'Aldri'}
+                  {recipient.last_sent_at ? new Date(recipient.last_sent_at).toLocaleString('no-NO', { timeZone: 'Europe/Oslo' }) : 'Aldri'}
                 </td>
                 <td className="px-4 py-3">
                   <button

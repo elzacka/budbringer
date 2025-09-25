@@ -93,7 +93,7 @@ export function PendingSubscribers({ pendingSubscribers }: PendingSubscribersPro
                 <tr key={subscriber.id} className="hover:bg-slate-50">
                   <td className="px-6 py-4 text-sm text-slate-900">{subscriber.email}</td>
                   <td className="px-6 py-4 text-sm text-slate-500">
-                    {new Date(subscriber.created_at).toLocaleString('no-NO')}
+                    {new Date(subscriber.created_at).toLocaleString('no-NO', { timeZone: 'Europe/Oslo' })}
                   </td>
                   <td className="px-6 py-4 text-sm text-slate-500">
                     <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-800">
