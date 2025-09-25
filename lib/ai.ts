@@ -41,7 +41,7 @@ export async function generateWithClaude(prompt: string, maxTokens: number = 400
 
   try {
     const message = await client.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-sonnet-4-20250514',
       max_tokens: maxTokens,
       messages: [{
         role: 'user',
@@ -57,7 +57,7 @@ export async function generateWithClaude(prompt: string, maxTokens: number = 400
 
     return {
       content: content.text,
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-sonnet-4-20250514',
       usage: {
         prompt_tokens: message.usage.input_tokens,
         completion_tokens: message.usage.output_tokens,

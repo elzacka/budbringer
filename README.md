@@ -13,7 +13,7 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 
 - **Frontend**: Next.js 15 app with React 19 for public landing page and admin panel
 - **Database**: Supabase PostgreSQL with migrations for subscribers, prompts, and run logs
-- **AI Models**: Anthropic Claude 4 and OpenAI GPT for content generation
+- **AI Models**: Anthropic Claude Sonnet 4 (Sept 2025) and OpenAI GPT-4o for intelligent content generation
 - **Automation**: Daily GitHub Actions workflow for content generation
 - **Email Delivery**: Cloudflare Worker with MailChannels for reliable email sending
 - **Styling**: Tailwind CSS 3.4 for modern, responsive design
@@ -29,7 +29,7 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 | **Database** | Supabase | 2.57.4 | PostgreSQL with real-time features |
 | **Auth** | Supabase SSR | 0.7.0 | Server-side authentication |
 | **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS framework |
-| **AI Models** | Anthropic SDK | 0.63.1 | Claude 4 integration |
+| **AI Models** | Anthropic SDK | 0.63.1 | Claude Sonnet 4 (Sept 2025) integration |
 | **AI Models** | OpenAI SDK | 5.23.0 | GPT integration |
 | **Email** | MailChannels | - | Transactional email delivery |
 | **Deployment** | Cloudflare Workers | - | Serverless email dispatcher |
@@ -98,7 +98,7 @@ Create `.env.local` with the following variables:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable/anon key | ✅ |
 | `SUPABASE_SERVICE_URL` | Supabase project URL (same as above) | ✅ |
 | `SUPABASE_SECRET_KEY` | Supabase secret/service role key | ✅ |
-| `ANTHROPIC_API_KEY` | Anthropic Claude API key | ⚠️* |
+| `ANTHROPIC_API_KEY` | Anthropic Claude Sonnet 4 API key | ⚠️* |
 | `OPENAI_API_KEY` | OpenAI GPT API key | ⚠️* |
 | `MAILCHANNELS_AUTH_TOKEN` | MailChannels API token | ✅ |
 | `PUBLIC_SITE_URL` | Base URL for signed links | ✅ |
@@ -114,7 +114,7 @@ Create `.env.local` with the following variables:
 The automated newsletter generation follows this workflow:
 
 1. **Daily Trigger**: GitHub Actions workflow runs at 05:30 CET
-2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using AI
+2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using Claude Sonnet 4
 3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables
 4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
 5. **Delivery**: Worker fetches latest digest and sends via MailChannels
@@ -141,7 +141,7 @@ Automated unsubscribe handling for GDPR compliance:
 ```mermaid
 graph TD
     A[GitHub Actions<br/>Daily 05:30 CET] --> B[Fetch News Sources]
-    B --> C[AI Processing<br/>Claude/GPT]
+    B --> C[AI Processing<br/>Claude Sonnet 4]
     C --> D[Store in Supabase<br/>digest_runs table]
     D --> E[Trigger Webhook]
     E --> F[Cloudflare Worker]
@@ -149,6 +149,23 @@ graph TD
     G --> H[Send via MailChannels]
     H --> I[Delivered to Subscribers]
 ```
+
+## 🤖 AI-Powered Content Generation
+
+Budbringer leverages cutting-edge AI technology for intelligent newsletter curation:
+
+### **Claude Sonnet 4 (September 2025)**
+- **Latest Model**: Updated to Anthropic's newest Claude Sonnet 4 (claude-sonnet-4-20250514)
+- **High Performance**: Exceptional reasoning capabilities optimized for content creation
+- **Cost Efficient**: 5x more cost-effective than Opus while maintaining excellent quality
+- **Large Context**: Supports up to 1M token context window for processing multiple news sources
+- **Norwegian Optimization**: Fine-tuned prompts for Norwegian language and cultural context
+
+### **Intelligent News Processing**
+- **Multi-Source Aggregation**: Fetches from NRK, ITavisen, TechCrunch, MIT Tech Review, and more
+- **Relevance Filtering**: AI-powered keyword matching and content analysis
+- **Content Synthesis**: Transforms raw news into structured Norwegian newsletter format
+- **Quality Control**: Validates output format and ensures consistent newsletter structure
 
 ## 📊 Available Scripts
 
@@ -158,8 +175,9 @@ graph TD
 | `npm run build` | Build production application |
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint code quality checks |
-| `npm run digest:generate` | Manually generate daily digest |
+| `npm run digest:generate` | Manually generate daily digest with Claude Sonnet 4 |
 | `npm run sources:test` | Test content source connections |
+| `npm run ai:test` | Test Claude Sonnet 4 AI integration |
 
 ### Admin Panel Features
 
