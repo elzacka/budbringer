@@ -1,14 +1,27 @@
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 
-// Initialize AI clients
-const anthropic = process.env.ANTHROPIC_API_KEY ? new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-}) : null;
+// Lazy-loaded AI clients
+let anthropic: Anthropic | null = null;
+let openai: OpenAI | null = null;
 
-const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-}) : null;
+function getAnthropicClient(): Anthropic | null {
+  if (anthropic === null && process.env.ANTHROPIC_API_KEY) {
+    anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+  }
+  return anthropic;
+}
+
+function getOpenAIClient(): OpenAI | null {
+  if (openai === null && process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
 
 export interface AIResponse {
   content: string;
@@ -21,12 +34,13 @@ export interface AIResponse {
 }
 
 export async function generateWithClaude(prompt: string, maxTokens: number = 4000): Promise<AIResponse> {
-  if (!anthropic) {
+  const client = getAnthropicClient();
+  if (!client) {
     throw new Error('Anthropic API key not configured');
   }
 
   try {
-    const message = await anthropic.messages.create({
+    const message = await client.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: maxTokens,
       messages: [{
@@ -57,12 +71,13 @@ export async function generateWithClaude(prompt: string, maxTokens: number = 400
 }
 
 export async function generateWithGPT(prompt: string, maxTokens: number = 4000): Promise<AIResponse> {
-  if (!openai) {
+  const client = getOpenAIClient();
+  if (!client) {
     throw new Error('OpenAI API key not configured');
   }
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await client.chat.completions.create({
       model: 'gpt-4o',
       messages: [{
         role: 'user',
@@ -93,8 +108,8 @@ export async function generateWithGPT(prompt: string, maxTokens: number = 4000):
 }
 
 export async function generateContent(prompt: string, maxTokens: number = 4000, preferredModel: 'claude' | 'gpt' | 'auto' = 'auto'): Promise<AIResponse> {
-  const claudeAvailable = !!anthropic;
-  const gptAvailable = !!openai;
+  const claudeAvailable = !!process.env.ANTHROPIC_API_KEY;
+  const gptAvailable = !!process.env.OPENAI_API_KEY;
 
   if (!claudeAvailable && !gptAvailable) {
     throw new Error('No AI models configured. Please set ANTHROPIC_API_KEY or OPENAI_API_KEY');
@@ -126,7 +141,7 @@ export async function generateContent(prompt: string, maxTokens: number = 4000, 
 
 export function getAvailableModels(): { claude: boolean; gpt: boolean } {
   return {
-    claude: !!anthropic,
-    gpt: !!openai
+    claude: !!process.env.ANTHROPIC_API_KEY,
+    gpt: !!process.env.OPENAI_API_KEY
   };
 }

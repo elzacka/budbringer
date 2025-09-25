@@ -37,7 +37,7 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
 
   // Create a digest run record
   const today = new Date().toISOString().split('T')[0];
-  const modelName = availableModels.claude ? 'claude-3-5-sonnet' : 'gpt-4o';
+  const modelName = availableModels.claude ? 'claude-3-5-sonnet-20241022' : 'gpt-4o';
 
   const { data: run, error: runError } = await supabase
     .from('digest_runs')
