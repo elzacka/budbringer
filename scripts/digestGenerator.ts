@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { getSupabaseServiceClient } from '../lib/supabase-admin';
+import { renderDigestHtml, renderDigestText } from '../lib/email';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -61,12 +62,17 @@ export async function generateDigestWithAI(promptBody: string): Promise<{ conten
       ]
     };
 
-    // Update run status to success
+    // Render HTML and text versions for email
+    const htmlContent = renderDigestHtml(digestContent);
+    const textContent = renderDigestText(digestContent);
+
+    // Update run status to success with both HTML and plain text
     await supabase
       .from('digest_runs')
       .update({
         status: 'success',
-        summary_plain: JSON.stringify(digestContent),
+        summary_plain: textContent,
+        summary_html: htmlContent,
         updated_at: new Date().toISOString()
       })
       .eq('id', run.id);

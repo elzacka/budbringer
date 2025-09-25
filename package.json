@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "digest:generate": "npx tsx scripts/dailyDigest.ts",
-    "sources:test": "npx tsx scripts/test-sources.ts"
+    "sources:test": "npx tsx scripts/test-sources.ts",
+    "email:test": "npx tsx scripts/test-email-dispatch.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.1",

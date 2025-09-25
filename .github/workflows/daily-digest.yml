@@ -14,11 +14,16 @@ concurrency:
 
 env:
   NEXT_TELEMETRY_DISABLED: 1
-  SUPABASE_SERVICE_URL: ${{ secrets.SUPABASE_SERVICE_URL }}
-  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  SUPABASE_SERVICE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+  SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
   PUBLIC_SITE_URL: ${{ secrets.PUBLIC_SITE_URL }}
   ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  MAILCHANNELS_AUTH_TOKEN: ${{ secrets.MAILCHANNELS_AUTH_TOKEN }}
+  UNSUBSCRIBE_SECRET: ${{ secrets.UNSUBSCRIBE_SECRET }}
+  DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
   ENABLE_TTS: ${{ secrets.ENABLE_TTS }}
   PIPER_VOICE: ${{ secrets.PIPER_VOICE }}
   PIPER_BINARY: ./piper/piper
@@ -66,7 +71,17 @@ jobs:
           DISPATCH_URL: ${{ secrets.DISPATCH_URL }}
           DISPATCH_TOKEN: ${{ secrets.DISPATCH_TOKEN }}
         run: |
+          if [ -z "$DISPATCH_URL" ]; then
+            echo "⚠️ DISPATCH_URL not configured - skipping email dispatch"
+            echo "Digest generated successfully but no emails sent"
+            exit 0
+          fi
+
+          echo "🚀 Triggering email dispatch to: $DISPATCH_URL"
           curl -X POST "$DISPATCH_URL" \
             -H "Authorization: Bearer $DISPATCH_TOKEN" \
             -H "User-Agent: budbringer-bot" \
-            -d '{}'
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            -w "HTTP Status: %{http_code}\n" \
+            -s
