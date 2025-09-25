@@ -7,10 +7,11 @@ interface Props {
   initialRecipients: Subscriber[];
 }
 
-const statusLabels: Record<Subscriber['status'], string> = {
+const statusLabels: Record<string, string> = {
   pending: 'Avventer bekreftelse',
   confirmed: 'Aktiv',
-  unsubscribed: 'Avmeldt'
+  unsubscribed: 'Avmeldt',
+  rejected: 'Avvist'
 };
 
 export function RecipientManager({ initialRecipients }: Props) {
@@ -110,7 +111,7 @@ export function RecipientManager({ initialRecipients }: Props) {
             {recipients.map((recipient) => (
               <tr key={recipient.id} className="hover:bg-slate-50">
                 <td className="px-4 py-3 font-medium text-slate-800">{recipient.email}</td>
-                <td className="px-4 py-3 text-slate-600">{statusLabels[recipient.status]}</td>
+                <td className="px-4 py-3 text-slate-600">{statusLabels[recipient.status] || recipient.status}</td>
                 <td className="px-4 py-3 text-slate-500">
                   {recipient.last_sent_at ? new Date(recipient.last_sent_at).toLocaleString('no-NO') : 'Aldri'}
                 </td>
