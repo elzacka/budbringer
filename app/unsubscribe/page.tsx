@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { UnsubscribePanel } from '../../components/UnsubscribePanel';
+import { getSupabaseServiceClient } from '../../lib/supabase-admin';
+import { verifySignature } from '../../lib/unsubscribe';
 
 export const metadata: Metadata = {
   title: 'Avmelding – Budbringer'
@@ -25,12 +26,30 @@ export default async function UnsubscribePage({ searchParams }: PageProps) {
     redirect('/');
   }
 
-  return (
-    <section className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-24">
-      <div className="space-y-8 text-center">
-        <h1 className="text-3xl font-semibold text-slate-50">Avslutt abonnement</h1>
-        <UnsubscribePanel email={email} signature={signature} />
-      </div>
-    </section>
-  );
+  // Verify signature and process unsubscribe automatically
+  const secret = process.env.UNSUBSCRIBE_SECRET;
+  if (!secret) {
+    redirect('https://forvarelset.tazk.no/page/meld-av/?error=configuration');
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!verifySignature(normalizedEmail, signature, secret)) {
+    redirect('https://forvarelset.tazk.no/page/meld-av/?error=invalid_signature');
+  }
+
+  // Process the unsubscribe
+  try {
+    const service = getSupabaseServiceClient();
+    await service
+      .from('subscribers')
+      .update({ status: 'unsubscribed', updated_at: new Date().toISOString() })
+      .eq('email', normalizedEmail);
+
+    // Successful unsubscribe - redirect to your external page
+    redirect(`https://forvarelset.tazk.no/page/meld-av/?success=true&email=${encodeURIComponent(email)}`);
+  } catch (error) {
+    console.error('Unsubscribe error:', error);
+    redirect('https://forvarelset.tazk.no/page/meld-av/?error=processing');
+  }
 }
