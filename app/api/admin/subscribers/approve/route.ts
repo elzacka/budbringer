@@ -12,6 +12,7 @@ export async function POST(request: Request) {
   try {
     const supabase = getSupabaseServiceClient();
     const body = await request.json();
+    console.log('Approval request received:', body);
     const parseResult = approvalSchema.safeParse(body);
 
     if (!parseResult.success) {
@@ -49,7 +50,23 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Error updating subscriber:', updateError);
-      return NextResponse.json({ error: 'Failed to update subscriber' }, { status: 500 });
+      console.error('Update attempt details:', {
+        subscriberId,
+        action,
+        newStatus,
+        reason,
+        updatePayload: {
+          status: newStatus,
+          updated_at: new Date().toISOString(),
+          ...(reason && { notes: reason })
+        }
+      });
+      return NextResponse.json({
+        error: 'Failed to update subscriber',
+        details: updateError.message,
+        code: updateError.code,
+        hint: updateError.hint
+      }, { status: 500 });
     }
 
     // Log the approval action
