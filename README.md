@@ -111,11 +111,11 @@ Create `.env.local` with the following variables:
 
 ## 🔄 Production Workflow
 
-The automated newsletter generation follows this workflow:
+The automated newsletter generation follows this workflow (all times in Oslo/Europe timezone):
 
-1. **Daily Trigger**: GitHub Actions workflow runs at 05:30 CET
+1. **Daily Trigger**: GitHub Actions workflow runs at 05:30 CET/CEST (Oslo time)
 2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using Claude Sonnet 4
-3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables
+3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables with Oslo timestamps
 4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
 5. **Delivery**: Worker fetches latest digest and sends via MailChannels
 
@@ -140,12 +140,12 @@ Automated unsubscribe handling for GDPR compliance:
 
 ```mermaid
 graph TD
-    A[GitHub Actions<br/>Daily 05:30 CET] --> B[Fetch News Sources]
+    A[GitHub Actions<br/>Daily 05:30 Oslo Time] --> B[Fetch News Sources]
     B --> C[AI Processing<br/>Claude Sonnet 4]
-    C --> D[Store in Supabase<br/>digest_runs table]
+    C --> D[Store in Supabase<br/>digest_runs table<br/>Oslo timezone]
     D --> E[Trigger Webhook]
     E --> F[Cloudflare Worker]
-    F --> G[Render Email Template]
+    F --> G[Render Email Template<br/>Oslo timestamps]
     G --> H[Send via MailChannels]
     H --> I[Delivered to Subscribers]
 ```
@@ -183,9 +183,9 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 
 - **Dashboard** (`/admin`): Overview of subscriber stats and recent runs
 - **Pending Approvals** (`/admin/pending`): Approve/reject new subscriber requests with comments
-- **Recipients** (`/admin/recipients`): Manage subscriber list, status, and deletions
+- **Recipients** (`/admin/recipients`): Manage subscriber list, status, and deletions with Oslo timestamps
 - **Prompts** (`/admin/prompts`): Configure AI prompts with versioning
-- **Runs** (`/admin/runs`): Monitor newsletter generation history
+- **Runs** (`/admin/runs`): Monitor newsletter generation history with delete functionality and Oslo timezone display
 
 ### Privacy & GDPR Compliance
 

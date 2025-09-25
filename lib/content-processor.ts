@@ -122,7 +122,15 @@ export async function processNewsIntoDigest(
     // Parse the JSON response
     let content: DigestContent;
     try {
-      content = JSON.parse(aiResponse.content);
+      // First, try to clean the response by removing markdown code blocks
+      let cleanedContent = aiResponse.content.trim();
+      if (cleanedContent.startsWith('```json')) {
+        cleanedContent = cleanedContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanedContent.startsWith('```')) {
+        cleanedContent = cleanedContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+
+      content = JSON.parse(cleanedContent);
     } catch (parseError) {
       console.error('Failed to parse AI response as JSON:', parseError);
       console.error('AI Response:', aiResponse.content.substring(0, 500) + '...');
