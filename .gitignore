@@ -9,6 +9,8 @@ out/
 # Logs og temp files
 *.png
 Feil*.md
+Fiks og forbedringer.md
+Nyhetsbrev.png
 
 # Developer documentation for Claude and app owner Lene
 CLAUDE.md

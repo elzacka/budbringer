@@ -130,8 +130,10 @@ export default {
     let failures = 0;
 
     for (const subscriber of subscribers) {
+      // Generate signature for unsubscribe
       const signature = await signUnsubscribe(subscriber.email, env.UNSUBSCRIBE_SECRET);
-      const unsubscribeUrl = `${env.PUBLIC_SITE_URL}/unsubscribe?email=${encodeURIComponent(
+      // Pass parameters to external site so it can call the Budbringer API
+      const unsubscribeUrl = `${env.PUBLIC_SITE_URL}?email=${encodeURIComponent(
         subscriber.email
       )}&signature=${signature}`;
 
