@@ -3,8 +3,18 @@
 node_modules/
 out/
 
-# Local environment variables
-.env.local
-
 # macOS artifacts
 .DS_Store
+
+# Logs og temp files
+*.png
+Feil*.md
+
+# Developer documentation for Claude and app owner Lene
+CLAUDE.md
+
+# Local dev stuff
+.claude
+.claude/
+.env.keys
+DOTENV_PRIVATE_KEY.md

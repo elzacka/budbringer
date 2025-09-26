@@ -47,7 +47,7 @@ export default async function AdminOverviewPage() {
           {runs && runs.length > 0 ? (
             <div className="mt-2 text-sm text-slate-600">
               <p>Status: <span className="font-semibold">{runs[0]?.status}</span></p>
-              <p>Dato: {runs[0]?.created_at ? new Date(runs[0].created_at).toLocaleString('no-NO') : 'N/A'}</p>
+              <p>Dato: {runs[0]?.created_at ? new Date(runs[0].created_at).toLocaleString('no-NO', { timeZone: 'Europe/Oslo' }) : 'N/A'}</p>
             </div>
           ) : (
             <p className="mt-2 text-sm text-slate-500">Ingen kjøringer ennå.</p>
@@ -72,7 +72,7 @@ export default async function AdminOverviewPage() {
               className="rounded-xl border border-slate-200 p-4 transition hover:bg-slate-50"
             >
               <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                <p className="font-semibold text-slate-800">{new Date(run.created_at).toLocaleString('no-NO')}</p>
+                <p className="font-semibold text-slate-800">{new Date(run.created_at).toLocaleString('no-NO', { timeZone: 'Europe/Oslo' })}</p>
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${
                     run.status === 'success'

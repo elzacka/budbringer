@@ -25,7 +25,7 @@ export function buildPrompt(newsItems: NewsItem[], editorPrompt: string, templat
   const articlesText = newsItems.map((item, index) => {
     return `${index + 1}. "${item.title}" (${item.source})
    URL: ${item.url}
-   Publisert: ${new Date(item.published_at).toLocaleDateString('no-NO')}
+   Publisert: ${new Date(item.published_at).toLocaleDateString('no-NO', { timeZone: 'Europe/Oslo' })}
    Sammendrag: ${item.description || 'Ikke tilgjengelig'}
    Kategori: ${item.category || 'Ukjent'}`;
   }).join('\n\n');

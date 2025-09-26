@@ -1,4 +1,4 @@
-// Cloudflare Worker that fetches the latest digest from Supabase and sends email via MailChannels
+// Cloudflare Worker that fetches the latest digest from Supabase and sends email via Resend
 
 async function renderHtml(template, unsubscribeUrl) {
   return template.replace(/\{\{unsubscribe_url\}\}/g, unsubscribeUrl);
@@ -39,60 +39,47 @@ async function fetchJson(url, env) {
   return response.json();
 }
 
-async function sendMailChannels(env, recipient, subject, html, text) {
+async function sendResend(env, recipient, subject, html, text) {
   console.log('📧 Attempting to send email to:', recipient.email);
   console.log('📧 From address:', env.MAIL_FROM_ADDRESS);
   console.log('📧 Subject:', subject);
 
+  if (!env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY mangler. Sett secret i Cloudflare.');
+  }
+
   const body = {
-    personalizations: [
-      {
-        to: [{ email: recipient.email }]
-      }
-    ],
-    from: {
-      email: env.MAIL_FROM_ADDRESS,
-      name: env.MAIL_FROM_NAME
-    },
-    reply_to: env.MAIL_REPLY_TO ? { email: env.MAIL_REPLY_TO } : undefined,
+    from: `${env.MAIL_FROM_NAME} <${env.MAIL_FROM_ADDRESS}>`,
+    to: [recipient.email],
     subject,
-    content: [
-      { type: 'text/plain', value: text },
-      { type: 'text/html', value: html }
-    ]
+    html,
+    text
   };
 
-  const headers = { 'Content-Type': 'application/json' };
-  const token = env.MAILCHANNELS_AUTH_TOKEN;
-
-  if (!token) {
-    throw new Error('MAILCHANNELS_AUTH_TOKEN mangler. Sett secret i Cloudflare.');
+  if (env.MAIL_REPLY_TO) {
+    body.reply_to = [env.MAIL_REPLY_TO];
   }
 
-  if (token.startsWith('mct_')) {
-    console.log('🔑 Using Bearer token authentication');
-    headers.Authorization = `Bearer ${token}`;
-  } else {
-    console.log('🔑 Using X-Api-Key authentication');
-    headers['X-Api-Key'] = token;
-  }
-
-  console.log('📨 Sending to MailChannels API...');
-  const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
+  console.log('📨 Sending to Resend API...');
+  const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${env.RESEND_API_KEY}`
+    },
     body: JSON.stringify(body)
   });
 
-  console.log('📨 MailChannels response status:', response.status);
+  console.log('📨 Resend response status:', response.status);
 
   if (!response.ok) {
     const errorText = await response.text();
-    console.error('📨 MailChannels error response:', errorText);
-    throw new Error(`MailChannels feilet (${response.status}): ${errorText}`);
+    console.error('📨 Resend error response:', errorText);
+    throw new Error(`Resend feilet (${response.status}): ${errorText}`);
   }
 
-  console.log('📨 MailChannels API call successful');
+  const result = await response.json();
+  console.log('📨 Resend API call successful, ID:', result.id);
 }
 
 export default {
@@ -138,7 +125,8 @@ export default {
       });
     }
 
-    const subject = `Dagens KI-brief ${new Date(digest.created_at).toLocaleDateString('no-NO')}`;
+    const osloDate = new Date(digest.created_at).toLocaleDateString('no-NO', { timeZone: 'Europe/Oslo' });
+    const subject = `Dagens KI-brief ${osloDate}`;
     let failures = 0;
 
     for (const subscriber of subscribers) {
@@ -153,7 +141,7 @@ export default {
       const text = await renderText(textTemplate, unsubscribeUrl);
 
       try {
-        await sendMailChannels(env, subscriber, subject, html, text);
+        await sendResend(env, subscriber, subject, html, text);
         console.log('✅ Email sent successfully to:', subscriber.email);
       } catch (error) {
         console.error('❌ Email send failed for', subscriber.email);

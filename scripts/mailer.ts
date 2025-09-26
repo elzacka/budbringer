@@ -8,7 +8,7 @@ export async function sendDigestEmail(email: string, digestData: any): Promise<v
     const htmlContent = renderDigestHtml(digestData);
 
     // For now, just log that we would send the email
-    // In production, this would integrate with MailChannels or another service
+    // In production, this uses Resend via Cloudflare Worker
     console.log(`✅ Email prepared for ${email}`);
     console.log('Subject:', `Budbringer – ${digestData.dateLabel}`);
     console.log('Content preview:', digestData.lead);

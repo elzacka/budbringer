@@ -15,7 +15,8 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 - **Database**: Supabase PostgreSQL with migrations for subscribers, prompts, and run logs
 - **AI Models**: Anthropic Claude Sonnet 4 (Sept 2025) and OpenAI GPT-4o for intelligent content generation
 - **Automation**: Daily GitHub Actions workflow for content generation
-- **Email Delivery**: Cloudflare Worker with MailChannels for reliable email sending
+- **Email Delivery**: Cloudflare Worker with Resend for reliable email sending
+- **Security**: Environment encryption with dotenvx public-key encryption
 - **Styling**: Tailwind CSS 3.4 for modern, responsive design
 - **Subscriber Management**: Approval workflow for new subscriber requests
 
@@ -31,7 +32,7 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 | **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS framework |
 | **AI Models** | Anthropic SDK | 0.63.1 | Claude Sonnet 4 (Sept 2025) integration |
 | **AI Models** | OpenAI SDK | 5.23.0 | GPT integration |
-| **Email** | MailChannels | - | Transactional email delivery |
+| **Email** | Resend | - | Modern transactional email delivery |
 | **Deployment** | Cloudflare Workers | - | Serverless email dispatcher |
 | **Linting** | ESLint | 9.36.0 | Code quality and consistency |
 
@@ -58,10 +59,14 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
    ```
 
 3. **Environment Setup**
+
+   The `.env.local` file is encrypted using dotenvx. Get the private key from team and save to `.env.keys`:
    ```bash
-   cp .env.example .env.local
-   # Fill in your Supabase project details and API keys
+   # Create .env.keys with the private key
+   echo 'DOTENV_PRIVATE_KEY_LOCAL=<key-from-team>' > .env.keys
    ```
+
+   All npm scripts automatically decrypt .env.local using the key from .env.keys.
 
 4. **Database Setup**
    ```bash
@@ -99,8 +104,7 @@ Create `.env.local` with the following variables:
 | `SUPABASE_SERVICE_URL` | Supabase project URL (same as above) | ✅ |
 | `SUPABASE_SECRET_KEY` | Supabase secret/service role key | ✅ |
 | `ANTHROPIC_API_KEY` | Anthropic Claude Sonnet 4 API key | ⚠️* |
-| `OPENAI_API_KEY` | OpenAI GPT API key | ⚠️* |
-| `MAILCHANNELS_AUTH_TOKEN` | MailChannels API token | ✅ |
+| `RESEND_API_KEY` | Resend email API key | ✅ |
 | `PUBLIC_SITE_URL` | Base URL for signed links | ✅ |
 | `UNSUBSCRIBE_SECRET` | Secret key for signed unsubscribe links | ✅ |
 | `DISPATCH_TOKEN` | Secret token for webhook security | ✅ |
@@ -117,7 +121,7 @@ The automated newsletter generation follows this workflow (all times in Oslo/Eur
 2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using Claude Sonnet 4
 3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables with Oslo timestamps
 4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
-5. **Delivery**: Worker fetches latest digest and sends via MailChannels
+5. **Delivery**: Worker fetches latest digest and sends via Resend
 
 ### 👥 Subscriber Management
 
@@ -146,7 +150,7 @@ graph TD
     D --> E[Trigger Webhook]
     E --> F[Cloudflare Worker]
     F --> G[Render Email Template<br/>Oslo timestamps]
-    G --> H[Send via MailChannels]
+    G --> H[Send via Resend]
     H --> I[Delivered to Subscribers]
 ```
 
@@ -166,7 +170,6 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 - **Relevance Filtering**: AI-powered keyword matching and content analysis
 - **Content Synthesis**: Transforms raw news into structured Norwegian newsletter format
 - **Quality Control**: Validates output format and ensures consistent newsletter structure
-- **Ethical Web Crawling**: Full robots.txt compliance with automatic parsing and respect for crawl delays
 
 ## 📊 Available Scripts
 
@@ -177,7 +180,7 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint code quality checks |
 | `npm run digest:generate` | Manually generate daily digest with Claude Sonnet 4 |
-| `npm run sources:test` | Test content source connections with robots.txt compliance |
+| `npm run sources:test` | Test content source connections |
 | `npm run ai:test` | Test Claude Sonnet 4 AI integration |
 
 ### Admin Panel Features
@@ -217,9 +220,10 @@ Enable text-to-speech generation for audio newsletters:
 
 The email dispatcher runs on Cloudflare Workers:
 
-1. Deploy `workers/email-dispatcher.js` to Cloudflare
-2. Configure environment variables
-3. Update webhook URL in GitHub Actions
+1. Install wrangler CLI: `npm install -D wrangler`
+2. Deploy: `npx wrangler deploy`
+3. Set secrets: `npx wrangler secret put RESEND_API_KEY`
+4. Update webhook URL in GitHub Actions
 
 ## 🔐 Security & Compliance
 
@@ -228,14 +232,13 @@ The email dispatcher runs on Cloudflare Workers:
 - Admin access controlled via Supabase RLS policies
 - Webhook authentication with secure tokens
 
-### Web Crawling Ethics
+### Environment Security
 
-- **Robots.txt Compliance**: Automatically fetches and parses robots.txt files before accessing RSS feeds
-- **Crawl Delay Respect**: Honors site-specific crawl-delay directives (defaults to 1 second minimum)
-- **Rate Limiting**: Built-in delays between different sources (500ms) to reduce server load
-- **Fail-Safe Policy**: If robots.txt cannot be fetched, defaults to allowing access (fail-open)
-- **User-Agent Identification**: Clear bot identification: `Budbringer-Bot/1.0 (+https://budbringer.no)`
-- **Caching**: Robots.txt rules cached for 1 hour to minimize repeated requests
+- **Encrypted Secrets**: All environment variables encrypted with dotenvx public-key encryption
+- **Safe Git Storage**: Encrypted `.env.local` can be committed to git without exposing secrets
+- **Private Key Protection**: Private decryption key stored in `.env.keys` (gitignored)
+- **Team Collaboration**: Share private key securely via password manager (1Password, LastPass)
+- **Automatic Decryption**: All npm scripts use `dotenvx run -f .env.local` for transparent decryption
 
 ## 🛠️ Development
 

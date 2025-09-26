@@ -58,7 +58,7 @@ async function testEmailDispatch() {
 
     // Check if we have the required environment variables for email dispatch
     const requiredVars = [
-      'MAILCHANNELS_AUTH_TOKEN',
+      'RESEND_API_KEY',
       'PUBLIC_SITE_URL',
       'UNSUBSCRIBE_SECRET'
     ];

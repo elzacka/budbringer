@@ -80,10 +80,10 @@ export async function POST(request: Request) {
           status: 'No persistent storage - processed and cleared immediately'
         },
         {
-          system: 'MailChannels (Email Service)',
+          system: 'Resend (Email Service)',
           purpose: 'Email delivery service',
           data_types: ['Email address', 'Delivery status'],
-          status: 'Subject to MailChannels retention policy (typically 30 days)'
+          status: 'Subject to Resend retention policy (typically 30 days)'
         }
       ],
       privacy_notes: {
