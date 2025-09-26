@@ -86,12 +86,18 @@ async function sendMailChannels(env, recipient, subject, html, text) {
 export default {
   async fetch(request, env) {
     if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 });
+      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+        status: 405,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${env.DISPATCH_TOKEN}`) {
-      return new Response('Unauthorized', { status: 401 });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const digestUrl = `${env.SUPABASE_SERVICE_URL}/rest/v1/digest_runs?status=eq.success&order=created_at.desc&limit=1`;
@@ -99,14 +105,25 @@ export default {
     const digest = digests[0];
 
     if (!digest || !digest.summary_plain) {
-      return new Response('Ingen ferdig digest', { status: 404 });
+      return new Response(JSON.stringify({ error: 'Ingen ferdig digest' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const subscribersUrl = `${env.SUPABASE_SERVICE_URL}/rest/v1/subscribers?status=eq.confirmed&select=id,email,language`;
     const subscribers = await fetchJson(subscribersUrl, env);
 
     if (!subscribers.length) {
-      return new Response('Ingen mottakere', { status: 200 });
+      return new Response(JSON.stringify({
+        success: true,
+        sent: 0,
+        failed: 0,
+        message: 'Ingen mottakere'
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
     const subject = `Dagens KI-brief ${new Date(digest.created_at).toLocaleDateString('no-NO')}`;
@@ -131,10 +148,28 @@ export default {
       }
     }
 
+    const totalSent = subscribers.length - failures;
+
     if (failures > 0) {
-      return new Response(`Ferdig med ${failures} feil`, { status: 207 });
+      return new Response(JSON.stringify({
+        success: true,
+        sent: totalSent,
+        failed: failures,
+        message: `Ferdig med ${failures} feil`
+      }), {
+        status: 207,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
-    return new Response('OK', { status: 200 });
+    return new Response(JSON.stringify({
+      success: true,
+      sent: totalSent,
+      failed: 0,
+      message: 'OK'
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 };
