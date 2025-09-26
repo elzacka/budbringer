@@ -40,6 +40,10 @@ async function fetchJson(url, env) {
 }
 
 async function sendMailChannels(env, recipient, subject, html, text) {
+  console.log('📧 Attempting to send email to:', recipient.email);
+  console.log('📧 From address:', env.MAIL_FROM_ADDRESS);
+  console.log('📧 Subject:', subject);
+
   const body = {
     personalizations: [
       {
@@ -66,21 +70,29 @@ async function sendMailChannels(env, recipient, subject, html, text) {
   }
 
   if (token.startsWith('mct_')) {
+    console.log('🔑 Using Bearer token authentication');
     headers.Authorization = `Bearer ${token}`;
   } else {
+    console.log('🔑 Using X-Api-Key authentication');
     headers['X-Api-Key'] = token;
   }
 
+  console.log('📨 Sending to MailChannels API...');
   const response = await fetch('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
     headers,
     body: JSON.stringify(body)
   });
 
+  console.log('📨 MailChannels response status:', response.status);
+
   if (!response.ok) {
     const errorText = await response.text();
+    console.error('📨 MailChannels error response:', errorText);
     throw new Error(`MailChannels feilet (${response.status}): ${errorText}`);
   }
+
+  console.log('📨 MailChannels API call successful');
 }
 
 export default {
@@ -142,8 +154,11 @@ export default {
 
       try {
         await sendMailChannels(env, subscriber, subject, html, text);
+        console.log('✅ Email sent successfully to:', subscriber.email);
       } catch (error) {
-        console.error('Sendefeil for', subscriber.email, error);
+        console.error('❌ Email send failed for', subscriber.email);
+        console.error('Error details:', error.message);
+        console.error('Full error:', error);
         failures += 1;
       }
     }
