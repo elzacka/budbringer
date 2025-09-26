@@ -15,10 +15,12 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 - **Database**: Supabase PostgreSQL with migrations for subscribers, prompts, and run logs
 - **AI Models**: Anthropic Claude Sonnet 4 (Sept 2025) and OpenAI GPT-4o for intelligent content generation
 - **Automation**: Daily GitHub Actions workflow for content generation
-- **Email Delivery**: Cloudflare Worker with Resend for reliable email sending
+- **Email Delivery**: Cloudflare Worker with Resend for reliable email sending with modern design
 - **Security**: Environment encryption with dotenvx public-key encryption
-- **Styling**: Tailwind CSS 3.4 for modern, responsive design
+- **Styling**: Tailwind CSS 3.4 for modern, responsive design with markdown processing
 - **Subscriber Management**: Approval workflow for new subscriber requests
+- **GDPR Compliance**: Complete data deletion system with user interface
+- **External Integration**: API endpoints for unsubscribe handling on external websites
 
 ## 🚀 Tech Stack
 
@@ -183,6 +185,15 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 | `npm run sources:test` | Test content source connections |
 | `npm run ai:test` | Test Claude Sonnet 4 AI integration |
 
+### Testing Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npx tsx scripts/test-email-design.ts` | Test improved email design and markdown processing |
+| `npx tsx scripts/test-unsubscribe.ts` | Test unsubscribe flow and API functionality |
+| `npx tsx scripts/test-gdpr-deletion.ts` | Test GDPR-compliant data deletion system |
+| `npx tsx scripts/test-worker-direct.ts` | Test Cloudflare Worker email dispatch |
+
 ### Admin Panel Features
 
 - **Dashboard** (`/admin`): Overview of subscriber stats and recent runs
@@ -193,11 +204,23 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 
 ### Privacy & GDPR Compliance
 
+- **Complete Data Deletion**: Full GDPR Article 17 implementation with user interface at `/gdpr/delete`
+- **Data Anonymization**: Automatic anonymization of emails in error logs during deletion
 - **Transparent Data Handling**: Complete documentation of data storage across all systems
 - **External Website Integration**: API endpoints for subscription verification and data details
 - **Secure Unsubscribe**: HMAC-signed links prevent tampering and unauthorized unsubscribes
 - **Data Location Transparency**: Clear information about EU data storage and retention policies
 - **User Rights Support**: Access, rectification, and deletion rights fully supported
+- **Audit Trail**: Complete logging of deletion requests for compliance verification
+
+### Modern Email Design
+
+- **Markdown Processing**: Automatic formatting of bold, italic, links, and code in newsletters
+- **Brand Consistency**: Modern design matching Budbringer brand colors and typography
+- **Responsive Layout**: Optimized for all email clients with proper fallbacks
+- **Visual Hierarchy**: Clear section dividers, bullet points, and call-to-action styling
+- **Inter Font**: Professional typography with web font integration
+- **Gradient Backgrounds**: Subtle gradients and shadows for modern appearance
 
 ## 🎵 TTS Features (Optional)
 
