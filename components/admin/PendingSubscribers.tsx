@@ -41,12 +41,12 @@ export function PendingSubscribers({ pendingSubscribers }: PendingSubscribersPro
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to process request');
+        throw new Error(result.error || 'Kunne ikke behandle forespørsel');
       }
 
       // Remove the subscriber from the list
       setSubscribers(prev => prev.filter(sub => sub.id !== subscriberId));
-      setMessage(`Abonnent ${action === 'approve' ? 'godkjent' : 'avvist'} successfully`);
+      setMessage(`Abonnent ${action === 'approve' ? 'ble godkjent' : 'ble avvist'}`);
 
       // Refresh the page data to update counts
       router.refresh();

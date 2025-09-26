@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     const parseResult = approvalSchema.safeParse(body);
 
     if (!parseResult.success) {
-      return NextResponse.json({ error: 'Invalid request data' }, { status: 422 });
+      return NextResponse.json({ error: 'Ugyldig forespørselsdata' }, { status: 422 });
     }
 
     const { subscriberId, action, reason } = parseResult.data;
@@ -28,11 +28,11 @@ export async function POST(request: Request) {
       .single();
 
     if (fetchError || !subscriber) {
-      return NextResponse.json({ error: 'Subscriber not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Abonnent ikke funnet' }, { status: 404 });
     }
 
     if (subscriber.status !== 'pending') {
-      return NextResponse.json({ error: 'Subscriber is not pending approval' }, { status: 400 });
+      return NextResponse.json({ error: 'Abonnent venter ikke på godkjenning' }, { status: 400 });
     }
 
     const newStatus = action === 'approve' ? 'confirmed' : 'rejected';
@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error('Error updating subscriber:', updateError);
-      return NextResponse.json({ error: 'Failed to update subscriber' }, { status: 500 });
+      return NextResponse.json({ error: 'Kunne ikke oppdatere abonnent' }, { status: 500 });
     }
 
     // Log the approval action
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      message: `Subscriber ${action}ed successfully`,
+      message: `Abonnent ${action === 'approve' ? 'godkjent' : 'avvist'}`,
       subscriber: {
         id: subscriberId,
         email: subscriber.email,

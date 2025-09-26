@@ -20,14 +20,14 @@ export async function POST(request: Request) {
   const json = await request.json().catch(() => null);
   const parsed = schema.safeParse(json);
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid request format' }, { status: 422 });
+    return NextResponse.json({ error: 'Ugyldig forespørselsformat' }, { status: 422 });
   }
 
   const { email, signature } = parsed.data;
   const normalizedEmail = email.trim().toLowerCase();
 
   if (!verifySignature(normalizedEmail, signature, secret)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 403 });
+    return NextResponse.json({ error: 'Ugyldig signatur' }, { status: 403 });
   }
 
   try {
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         success: true,
         was_subscribed: false,
-        message: 'Email address not found in our system'
+        message: 'E-postadressen er ikke funnet i systemet vårt'
       });
     }
 
@@ -96,6 +96,6 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Unsubscribe info error:', error);
-    return NextResponse.json({ error: 'Failed to retrieve subscription information' }, { status: 500 });
+    return NextResponse.json({ error: 'Kunne ikke hente abonnementsinformasjon' }, { status: 500 });
   }
 }

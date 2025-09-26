@@ -32,7 +32,7 @@ export function RunsManager({ initialRuns }: Props) {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to delete run');
+        throw new Error(result.error || 'Kunne ikke slette kjøring');
       }
 
       // Remove the run from the list
