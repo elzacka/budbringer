@@ -58,7 +58,8 @@ export function processDigestContentMarkdown(content: {
     bullets: string[];
     link?: string;
   }>;
-  actions: string[];
+  actions?: string[];
+  audioUrl?: string | null;
 }): typeof content {
   return {
     ...content,
@@ -68,7 +69,7 @@ export function processDigestContentMarkdown(content: {
       heading: processMarkdownToHtml(section.heading),
       bullets: section.bullets.map(bullet => processMarkdownToHtml(bullet))
     })),
-    actions: content.actions.map(action => processMarkdownToHtml(action))
+    actions: content.actions ? content.actions.map(action => processMarkdownToHtml(action)) : undefined
   };
 }
 
@@ -83,7 +84,8 @@ export function processDigestContentText(content: {
     bullets: string[];
     link?: string;
   }>;
-  actions: string[];
+  actions?: string[];
+  audioUrl?: string | null;
 }): typeof content {
   return {
     ...content,
@@ -93,6 +95,6 @@ export function processDigestContentText(content: {
       heading: processMarkdownToText(section.heading),
       bullets: section.bullets.map(bullet => processMarkdownToText(bullet))
     })),
-    actions: content.actions.map(action => processMarkdownToText(action))
+    actions: content.actions ? content.actions.map(action => processMarkdownToText(action)) : undefined
   };
 }

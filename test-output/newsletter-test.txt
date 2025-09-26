@@ -1,0 +1,32 @@
+BUDBRINGER – FREDAG 27. SEPTEMBER 2025
+
+Dagens viktigste KI-nyheter viser at kunstig intelligens fortsetter å revolusjonere teknologibransjen. Vi ser spennende utvikling innen maskinlæring og nye produktlanseringer som vil påvirke norske bedrifter.
+
+🚀 Produktnyheter
+  • OpenAI lanserer ny versjon av GPT-4 med forbedret norsk språkstøtte og bedre ytelse
+  • Google AI introduserer Bard Enterprise for bedrifter - nå tilgjengelig i Norge
+  • Microsoft Copilot får nye funksjoner for kodegenerering og dokumenthåndtering
+  Les mer: https://openai.com/news
+
+🔬 Forskning og utvikling
+  • NTNU publiserer studie om KI i norsk helsevesen - viser lovende resultater
+  • Ny forskningsrapport: KI kan redusere energiforbruk med opptil 30% i datasentre
+  • Europeiske forskere utvikler etiske retningslinjer for KI-utvikling
+
+💼 Næringsliv og regulering
+  • EU vedtar nye KI-reguleringer som påvirker norske tech-selskaper
+  • Equinor investerer 1 milliard kroner i KI-satsing for olje- og gassektoren
+  • Norske myndigheter lanserer digital strategi for offentlig sektor med fokus på KI
+  Les mer: https://regjeringen.no/digital-strategi
+
+Hva bør du gjøre?
+1. Utforsk hvordan GPT-4 turbo kan forbedre din bedrifts kundeservice
+2. Delta på NTNUs webinar om KI i helsevesen (påmelding her (https://ntnu.no/webinar))
+3. Vurder om din bedrift er klar for EUs nye KI-reguleringer
+4. Test Microsoft Copilot for å se om det kan effektivisere dine arbeidsprosesser
+
+Lytt til dagens briefing: https://budbringer.no/audio/2025-09-27
+
+---
+Administrer abonnementet ditt: {{unsubscribe_url}}
+Slett alle data (GDPR): https://budbringer.no/gdpr/delete

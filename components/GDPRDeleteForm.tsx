@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface Props {
   email: string;
@@ -83,12 +84,12 @@ export function GDPRDeleteForm({ email, signature }: Props) {
             {result.success && (
               <div className="mt-4">
                 <div className="-mx-2 -my-1.5 flex">
-                  <a
+                  <Link
                     href="/"
                     className="rounded-md bg-green-50 px-2 py-1.5 text-sm font-medium text-green-800 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2 focus:ring-offset-green-50"
                   >
                     Gå til forsiden
-                  </a>
+                  </Link>
                 </div>
               </div>
             )}

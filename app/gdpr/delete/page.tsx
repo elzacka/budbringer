@@ -1,7 +1,8 @@
 import { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { getSupabaseServiceClient } from '../../../lib/supabase-admin';
-import { verifySignature, createSignature } from '../../../lib/unsubscribe';
+import { verifySignature } from '../../../lib/unsubscribe';
 import { GDPRDeleteForm } from '../../../components/GDPRDeleteForm';
 
 export const metadata: Metadata = {
@@ -73,12 +74,12 @@ export default async function GDPRDeletePage({ searchParams }: PageProps) {
                 <strong>{email}</strong>.
               </p>
               <div className="mt-6">
-                <a
+                <Link
                   href="/"
                   className="text-blue-600 hover:text-blue-800 font-medium"
                 >
                   ← Tilbake til forsiden
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -157,7 +158,7 @@ export default async function GDPRDeletePage({ searchParams }: PageProps) {
             <div className="mt-6 pt-6 border-t border-gray-200">
               <p className="text-xs text-gray-500">
                 Denne funksjonen er implementert i henhold til GDPR (Personvernforordningen)
-                artikkel 17 - retten til sletting ("retten til å bli glemt").
+                artikkel 17 - retten til sletting (&quot;retten til å bli glemt&quot;).
               </p>
             </div>
           </div>

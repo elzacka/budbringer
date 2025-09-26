@@ -81,7 +81,7 @@ export async function POST(request: Request) {
           .update({
             error_message: anonymizedMessage,
             context: {
-              ...((log.context as any) || {}),
+              ...((log.context as Record<string, unknown>) || {}),
               gdpr_anonymized: true,
               anonymized_at: new Date().toISOString()
             }
