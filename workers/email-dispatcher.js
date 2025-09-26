@@ -26,8 +26,8 @@ async function signUnsubscribe(email, secret) {
 async function fetchJson(url, env) {
   const response = await fetch(url, {
     headers: {
-      apikey: env.SUPABASE_SERVICE_ROLE_KEY,
-      Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}`,
+      apikey: env.SUPABASE_SECRET_KEY,
+      Authorization: `Bearer ${env.SUPABASE_SECRET_KEY}`,
       Accept: 'application/json'
     }
   });
