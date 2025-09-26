@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { getSupabaseServiceClient } from '../lib/supabase-admin';
 import { generateDigestWithAI } from './digestGenerator';
-import { sendDigestEmail } from './mailer';
+// Remove the mock mailer import - we'll use webhook dispatch instead
 import { formatNorwegianDateTime } from '../lib/timezone';
 
 // Load environment variables
@@ -54,22 +54,47 @@ export async function generateDailyDigest() {
   const { content: digestContent, runId } = await generateDigestWithAI(prompt.body, prompt.id);
   console.log('Generert digest basert på prompt:', prompt.id, 'Run ID:', runId);
 
-  // Send epost til alle mottakere
-  let sentCount = 0;
-  let failedCount = 0;
+  // Trigger email dispatch via Cloudflare Worker webhook
+  const dispatchUrl = process.env.DISPATCH_URL;
+  const dispatchToken = process.env.DISPATCH_TOKEN;
 
-  for (const recipient of recipients) {
-    try {
-      await sendDigestEmail(recipient.email, digestContent);
-      sentCount++;
-      console.log(`✅ Digest sendt til ${recipient.email}`);
-    } catch (sendError) {
-      failedCount++;
-      console.error(`❌ Feil ved sending til ${recipient.email}:`, sendError);
-    }
+  if (!dispatchUrl) {
+    console.error('❌ DISPATCH_URL not configured - cannot send emails');
+    console.log('📧 Generated digest content is stored in database but emails not sent');
+    return;
   }
 
-  console.log(`📊 Sammendrag: ${sentCount} sendt, ${failedCount} feilet av ${recipients.length} totalt`);
+  if (!dispatchToken) {
+    console.error('❌ DISPATCH_TOKEN not configured - cannot authenticate with worker');
+    return;
+  }
+
+  try {
+    console.log('🚀 Triggering email dispatch via Cloudflare Worker...');
+
+    const response = await fetch(dispatchUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${dispatchToken}`
+      }
+      // No body - Worker fetches latest digest from database directly
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP ${response.status}: ${errorText}`);
+    }
+
+    const result = await response.json();
+    console.log('✅ Email dispatch completed successfully');
+    console.log(`📊 Emails sent: ${result.sent || 'unknown'}`);
+    console.log(`❌ Emails failed: ${result.failed || 0}`);
+
+  } catch (dispatchError) {
+    console.error('❌ Failed to dispatch emails via worker:', dispatchError);
+    console.log('📧 Digest is generated and stored, but emails could not be sent');
+    throw dispatchError;
+  }
 
   // Sluttidspunkt (Oslo-tid)
   const osloNowEnd = formatNorwegianDateTime();

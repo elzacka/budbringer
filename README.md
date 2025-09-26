@@ -166,6 +166,7 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 - **Relevance Filtering**: AI-powered keyword matching and content analysis
 - **Content Synthesis**: Transforms raw news into structured Norwegian newsletter format
 - **Quality Control**: Validates output format and ensures consistent newsletter structure
+- **Ethical Web Crawling**: Full robots.txt compliance with automatic parsing and respect for crawl delays
 
 ## 📊 Available Scripts
 
@@ -176,7 +177,7 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 | `npm run start` | Start production server |
 | `npm run lint` | Run ESLint code quality checks |
 | `npm run digest:generate` | Manually generate daily digest with Claude Sonnet 4 |
-| `npm run sources:test` | Test content source connections |
+| `npm run sources:test` | Test content source connections with robots.txt compliance |
 | `npm run ai:test` | Test Claude Sonnet 4 AI integration |
 
 ### Admin Panel Features
@@ -220,12 +221,21 @@ The email dispatcher runs on Cloudflare Workers:
 2. Configure environment variables
 3. Update webhook URL in GitHub Actions
 
-## 🔐 Security
+## 🔐 Security & Compliance
 
 - All API keys stored as environment variables
 - Signed unsubscribe links with HMAC verification
 - Admin access controlled via Supabase RLS policies
 - Webhook authentication with secure tokens
+
+### Web Crawling Ethics
+
+- **Robots.txt Compliance**: Automatically fetches and parses robots.txt files before accessing RSS feeds
+- **Crawl Delay Respect**: Honors site-specific crawl-delay directives (defaults to 1 second minimum)
+- **Rate Limiting**: Built-in delays between different sources (500ms) to reduce server load
+- **Fail-Safe Policy**: If robots.txt cannot be fetched, defaults to allowing access (fail-open)
+- **User-Agent Identification**: Clear bot identification: `Budbringer-Bot/1.0 (+https://budbringer.no)`
+- **Caching**: Robots.txt rules cached for 1 hour to minimize repeated requests
 
 ## 🛠️ Development
 

@@ -194,26 +194,44 @@ export async function generateDigestWithAI(promptBody: string, promptId?: string
 
     // Step 4: Update run status with results
     console.log('--- Step 4: Updating database ---');
-    const updateData: Record<string, unknown> = {
+
+    // Try to update with full metrics first
+    const fullUpdateData: Record<string, unknown> = {
       status: 'success',
       summary_plain: textContent,
       summary_html: htmlContent,
-      updated_at: getNowOsloISO()
+      sources_checked: processingResult.sourceCount,
+      items_processed: processingResult.articlesProcessed,
+      ai_tokens_used: processingResult.aiResponse.usage?.total_tokens || 0
     };
 
-    // Add metrics if columns exist (graceful degradation)
-    try {
-      updateData.sources_checked = processingResult.sourceCount;
-      updateData.items_processed = processingResult.articlesProcessed;
-      updateData.ai_tokens_used = processingResult.aiResponse.usage?.total_tokens || 0;
-    } catch {
-      // Ignore if columns don't exist
-    }
-
-    await supabase
+    let { error: updateError } = await supabase
       .from('digest_runs')
-      .update(updateData)
+      .update(fullUpdateData)
       .eq('id', run.id);
+
+    // If that fails, try without the metrics columns (graceful degradation)
+    if (updateError && updateError.message?.includes('not find')) {
+      console.log('Metrics columns not found, updating with basic data only');
+      const basicUpdateData = {
+        status: 'success',
+        summary_plain: textContent,
+        summary_html: htmlContent
+      };
+
+      const { error: basicUpdateError } = await supabase
+        .from('digest_runs')
+        .update(basicUpdateData)
+        .eq('id', run.id);
+
+      if (basicUpdateError) {
+        console.error('Failed to update run status (basic):', basicUpdateError);
+        throw basicUpdateError;
+      }
+    } else if (updateError) {
+      console.error('Failed to update run status (full):', updateError);
+      throw updateError;
+    }
 
     console.log(`✅ Digest generation completed successfully!`);
     console.log(`Run ID: ${run.id}`);

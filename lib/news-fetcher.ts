@@ -1,6 +1,7 @@
 import { XMLParser } from 'fast-xml-parser';
 import { getSupabaseServiceClient } from './supabase-admin';
 import { getDaysAgoOslo, getNowOsloISO, parseOsloDate } from './timezone';
+import { isUrlAllowed } from './robots-checker';
 
 export interface NewsItem {
   title: string;
@@ -31,6 +32,19 @@ const xmlParser = new XMLParser({
 export async function fetchRSSFeed(url: string): Promise<NewsItem[]> {
   try {
     console.log(`Fetching RSS feed: ${url}`);
+
+    // Check robots.txt compliance first
+    const robotsCheck = await isUrlAllowed(url);
+    if (!robotsCheck.allowed) {
+      console.warn(`Robots.txt disallows fetching ${url} - skipping`);
+      return [];
+    }
+
+    // Respect crawl delay if specified
+    if (robotsCheck.crawlDelay) {
+      console.log(`Respecting crawl delay of ${robotsCheck.crawlDelay}ms for ${url}`);
+      await new Promise(resolve => setTimeout(resolve, robotsCheck.crawlDelay));
+    }
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000);
@@ -160,12 +174,18 @@ export async function fetchNewsFromSources(pipelineId: number): Promise<NewsItem
   const allNews: NewsItem[] = [];
   const errors: string[] = [];
 
-  // Fetch from each source
-  for (const pipelineSource of pipelineSources) {
+  // Fetch from each source with respectful delays
+  for (let i = 0; i < pipelineSources.length; i++) {
+    const pipelineSource = pipelineSources[i];
     const source = pipelineSource.content_sources as unknown as ContentSource;
 
     if (!source || !source.active) {
       continue;
+    }
+
+    // Add a small delay between different sources to be respectful
+    if (i > 0) {
+      await new Promise(resolve => setTimeout(resolve, 500)); // 500ms between sources
     }
 
     try {
