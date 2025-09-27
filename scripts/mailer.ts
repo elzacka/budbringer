@@ -10,7 +10,7 @@ export async function sendDigestEmail(email: string, digestData: any): Promise<v
     // For now, just log that we would send the email
     // In production, this uses Resend via Cloudflare Worker
     console.log(`✅ Email prepared for ${email}`);
-    console.log('Subject:', `Budbringer – ${digestData.dateLabel}`);
+    console.log('Subject:', `Dagens KI-brief`);
     console.log('Content preview:', digestData.lead);
     console.log('Sections:', digestData.sections.length);
 

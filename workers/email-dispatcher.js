@@ -126,7 +126,7 @@ export default {
     }
 
     const osloDate = new Date(digest.created_at).toLocaleDateString('no-NO', { timeZone: 'Europe/Oslo' });
-    const subject = `Dagens KI-brief ${osloDate}`;
+    const subject = `Dagens KI-brief`;
     let failures = 0;
 
     for (const subscriber of subscribers) {
