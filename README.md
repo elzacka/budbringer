@@ -134,15 +134,16 @@ New subscribers go through an approval process:
 3. **Admin Review**: Admins approve/reject subscribers via `/admin/pending` interface
 4. **Email Delivery**: Only `confirmed` subscribers receive daily newsletters
 
-### 📧 Unsubscribe System
+### 📧 Simplified Unsubscribe & GDPR System
 
-Automated unsubscribe handling for GDPR compliance:
+One-click unsubscribe with automatic GDPR compliance:
 
 1. **Secure Links**: Newsletter contains signed unsubscribe link with HMAC verification
-2. **Automatic Processing**: Click processes unsubscribe immediately in database
-3. **External Redirect**: Users redirected to external website with confirmation
-4. **Data Transparency**: Comprehensive information about data storage and handling
-5. **API Integration**: External website can query subscription status and data locations
+2. **Automatic Data Deletion**: Single click completely removes all personal data (GDPR-compliant)
+3. **Background Processing**: Email anonymization and subscriber deletion happens automatically
+4. **External Redirect**: Users redirected to confirmation page on external website
+5. **Audit Logging**: Complete compliance trail without storing personal information
+6. **No Complex Forms**: Simple user experience without multi-step confirmation processes
 
 ```mermaid
 graph TD
@@ -204,14 +205,12 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 
 ### Privacy & GDPR Compliance
 
-- **Complete Data Deletion**: Full GDPR Article 17 implementation with user interface at `/gdpr/delete`
-- **Data Anonymization**: Automatic anonymization of emails in error logs during deletion
-- **Transparent Data Handling**: Complete documentation of data storage across all systems
-- **External Website Integration**: API endpoints for subscription verification and data details
-- **Secure Unsubscribe**: HMAC-signed links prevent tampering and unauthorized unsubscribes
-- **Data Location Transparency**: Clear information about EU data storage and retention policies
-- **User Rights Support**: Access, rectification, and deletion rights fully supported
-- **Audit Trail**: Complete logging of deletion requests for compliance verification
+- **One-Click Data Deletion**: Full GDPR Article 17 compliance through simplified unsubscribe flow
+- **Automatic Anonymization**: Email addresses anonymized in error logs during unsubscribe
+- **Secure Unsubscribe**: HMAC-signed links prevent tampering and unauthorized actions
+- **Complete Data Removal**: Subscriber records permanently deleted from all systems
+- **Audit Trail**: Compliance logging without storing personal information
+- **External Integration**: API endpoints for subscription verification on external websites
 
 ### Modern Email Design
 

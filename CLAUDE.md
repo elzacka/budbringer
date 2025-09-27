@@ -13,8 +13,8 @@ Welcome, Claude! This file contains essential information about the Budbringer c
 - Admin interface for managing prompts, sources, and digest runs
 - Norwegian localization (no-NO) and Oslo timezone (Europe/Oslo)
 - Environment variable encryption with dotenvx
-- GDPR-compliant data deletion system
-- External website integration for unsubscribe handling
+- Simplified one-click unsubscribe with automatic GDPR compliance
+- External website integration for unsubscribe confirmation
 - Comprehensive testing infrastructure
 
 ## Architecture
@@ -114,13 +114,13 @@ app/
 │   └── recipients/page.tsx  # Subscriber management
 ├── api/                     # API routes
 │   ├── admin/digest-runs/   # Delete digest runs
-│   ├── gdpr/                # GDPR compliance endpoints
-│   │   ├── delete/          # Data deletion API
+│   ├── gdpr/                # Legacy GDPR endpoints (manual deletion)
+│   │   ├── delete/          # Manual data deletion API
 │   │   └── request-deletion/ # Deletion request handler
 │   ├── subscribe/           # Newsletter subscription
-│   └── unsubscribe/         # Newsletter unsubscribe
-├── gdpr/delete/page.tsx     # GDPR data deletion UI
-└── unsubscribe/page.tsx     # Unsubscribe page
+│   └── unsubscribe/         # Main unsubscribe with automatic GDPR deletion
+├── gdpr/delete/page.tsx     # Legacy manual GDPR deletion UI (rarely used)
+└── unsubscribe/page.tsx     # Primary unsubscribe page with auto data deletion
 
 components/
 ├── admin/
@@ -128,7 +128,7 @@ components/
 │   ├── PromptsManager.tsx   # AI prompt management
 │   ├── SourcesManager.tsx   # RSS source management
 │   └── RecipientManager.tsx # Subscriber management
-├── GDPRDeleteForm.tsx       # GDPR data deletion form
+├── GDPRDeleteForm.tsx       # Legacy manual GDPR deletion form
 └── SubscribeForm.tsx        # Newsletter subscription form
 
 lib/
@@ -188,24 +188,37 @@ const osloTime = new Date().toLocaleString('sv-SE', {
 });
 ```
 
-### 3. GDPR Data Deletion
-Complete and auditable data deletion:
+### 3. Simplified Unsubscribe with Automatic GDPR Deletion
+Primary user flow - one-click complete data deletion via `/unsubscribe`:
 ```typescript
-// 1. Anonymize error logs containing email
+// app/unsubscribe/page.tsx - Handles both unsubscribe and GDPR deletion
+// 1. Verify HMAC signature
+if (!verifySignature(normalizedEmail, signature, secret)) {
+  redirect('error page');
+}
+
+// 2. Get subscriber before deletion
+const { data: subscriber } = await service.from('subscribers')
+  .select('id, email').eq('email', normalizedEmail).single();
+
+// 3. Anonymize error logs containing the email
 const anonymizedMessage = log.error_message.replace(
   new RegExp(normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'),
   '[REDACTED]'
 );
 
-// 2. Delete subscriber record
-await supabase.from('subscribers').delete().eq('id', subscriber.id);
+// 4. Delete subscriber record completely (GDPR compliance)
+await service.from('subscribers').delete().eq('id', subscriber.id);
 
-// 3. Create audit log
-await supabase.from('error_logs').insert({
-  error_type: 'gdpr_deletion',
-  error_message: `GDPR deletion completed for subscriber ID: ${subscriber.id}`,
-  context: { timestamp: now, note: 'Personal data permanently deleted' }
+// 5. Create audit log without personal data
+await service.from('error_logs').insert({
+  error_type: 'unsubscribe_gdpr_deletion',
+  error_message: `Automatic GDPR deletion completed for subscriber ID: ${subscriber.id}`,
+  context: { note: 'Personal data permanently deleted per automatic unsubscribe flow' }
 });
+
+// 6. Redirect to external confirmation page
+redirect(`external-site.com/confirmation?success=true&deleted=true`);
 ```
 
 ### 4. Markdown Processing
@@ -363,7 +376,7 @@ npx tsx scripts/test-domain-config.ts    # Test domain configuration
 - **RSS Aggregation**: Multi-source RSS feed fetching with robots.txt compliance
 - **Email Delivery**: Modern email templates via Resend with markdown processing
 - **Admin Interface**: Complete admin panel with delete functionality
-- **GDPR Compliance**: Full data deletion system with user interface
+- **GDPR Compliance**: Simplified one-click unsubscribe with automatic data deletion
 - **External Integration**: Unsubscribe handling for external websites
 - **Testing Infrastructure**: Comprehensive test scripts for all major features
 - **Database Operations**: Graceful degradation and schema migrations
@@ -373,7 +386,10 @@ npx tsx scripts/test-domain-config.ts    # Test domain configuration
 ### 🎉 Recent Improvements (September 2025)
 - **Fixed**: Database schema issues with content column migration
 - **Enhanced**: Email design with modern styling and markdown support
-- **Implemented**: Complete GDPR data deletion system
+- **Implemented**: Simplified one-click GDPR-compliant unsubscribe system
+- **Simplified**: Unsubscribe flow with automatic GDPR deletion (no complex forms)
+- **Fixed**: TypeScript build errors and ESLint violations
+- **Updated**: Email templates to reflect automatic data deletion
 - **Created**: External unsubscribe integration documentation
 - **Added**: Comprehensive testing scripts for all functionality
 - **Improved**: Error handling and audit logging
