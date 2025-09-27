@@ -44,21 +44,19 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
     )
     .join('\n');
 
-  const numberWords = ['En', 'To', 'Tre', 'Fire', 'Fem', 'Seks', 'Syv', 'Åtte', 'Ni', 'Ti'];
-
   const actionsHtml = actions?.length
     ? `
       <section style="margin-top: 64px; padding: 36px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 20px; border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08), 0 3px 10px rgba(15, 23, 42, 0.04);">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 28px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 24px;">
           <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);">
             <span style="color: white; font-size: 14px; font-weight: 700;">✓</span>
           </div>
           <h3 style="font-size: 20px; margin: 0; color: #0f172a; font-weight: 700; letter-spacing: -0.02em; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1;">Hva bør du gjøre?</h3>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="display: flex; flex-direction: column; gap: 0;">
           ${actions.map((action, index) =>
-            `<div style="display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; ${index !== actions.length - 1 ? 'border-bottom: 1px solid rgba(226, 232, 240, 0.5);' : ''}">
-              <span style="color: #0ea5e9; font-size: 15px; font-weight: 700; min-width: 32px; line-height: 1.6;">${numberWords[index] || (index + 1)}.</span>
+            `<div style="display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; ${index !== actions.length - 1 ? 'border-bottom: 1px solid rgba(226, 232, 240, 0.5);' : ''}">
+              <span style="color: #0ea5e9; font-size: 15px; font-weight: 700; min-width: 24px; line-height: 1.6;">${index + 1}.</span>
               <span style="flex: 1; color: #475569; font-size: 15px; line-height: 1.6; font-weight: 400;">${action}</span>
             </div>`
           ).join('')}
@@ -121,16 +119,16 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
         </main>
 
         <!-- Footer -->
-        <footer style="margin-top: 80px; text-align: center; padding: 0 24px;">
+        <footer style="margin-top: 96px; text-align: center; padding: 0 24px;">
           <div style="background: rgba(255, 255, 255, 0.7); border-radius: 16px; padding: 24px 28px; border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);">
-            <p style="margin: 0 0 12px 0; font-size: 13px; color: #64748b; line-height: 1.5; font-weight: 400;">
+            <p style="margin: 0 0 10px 0; font-size: 13px; color: #64748b; line-height: 1.5; font-weight: 400;">
               Du får denne e-posten fordi du har meldt deg på Budbringers daglige KI-brief.
             </p>
-            <p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b;">
+            <p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b; font-weight: 400;">
               <a href="{{unsubscribe_url}}" style="color: #0ea5e9; text-decoration: none; font-weight: 600; border-bottom: 1px solid rgba(14, 165, 233, 0.3);">Meld deg av nyhetsbrevet</a>
             </p>
-            <p style="margin: 0; font-size: 11px; color: #94a3b8; line-height: 1.4;">
-              Alle personopplysninger slettes automatisk når du trykker på "Meld deg av nyhetsbrevet"
+            <p style="margin: 0; font-size: 13px; color: #94a3b8; line-height: 1.5; font-weight: 400;">
+              Alle personopplysninger slettes automatisk når du trykker på "Meld deg av nyhetsbrevet".
             </p>
           </div>
         </footer>
