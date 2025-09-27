@@ -1,3 +1,8 @@
 name = "budbringer-dispatch"
 main = "workers/email-dispatcher.js"
-compatibility_date = "2025-09-26"
+compatibility_date = "2024-09-27"
+
+# Environment variables are set in Cloudflare dashboard
+# Required vars: SUPABASE_SERVICE_URL, SUPABASE_SECRET_KEY, MAILCHANNELS_AUTH_TOKEN,
+# MAIL_FROM_ADDRESS, MAIL_FROM_NAME, MAIL_REPLY_TO, DISPATCH_TOKEN,
+# UNSUBSCRIBE_SECRET, PUBLIC_SITE_URL
