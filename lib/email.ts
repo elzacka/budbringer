@@ -130,8 +130,10 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
               Du får denne e-posten fordi du har meldt deg på Budbringers daglige KI-brief.
             </p>
             <p style="margin: 0; font-size: 13px; color: #64748b;">
-              <a href="{{unsubscribe_url}}" style="color: #0ea5e9; text-decoration: none; font-weight: 500;">Meld deg av nyhetsbrevet</a> •
-              <a href="/gdpr/delete" style="color: #64748b; text-decoration: none;">Slett alle data (GDPR)</a>
+              <a href="{{unsubscribe_url}}" style="color: #0ea5e9; text-decoration: none; font-weight: 500;">Meld deg av nyhetsbrevet</a>
+            </p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">
+              Alle personopplysninger slettes automatisk ved avmelding (GDPR-kompatibelt)
             </p>
           </div>
         </footer>
@@ -170,5 +172,5 @@ ${sectionText}${actionsText}${audioLine}
 
 ---
 Administrer abonnementet ditt: {{unsubscribe_url}}
-Slett alle data (GDPR): https://budbringer.no/gdpr/delete`;
+Alle personopplysninger slettes automatisk ved avmelding (GDPR-kompatibelt)`;
 }
