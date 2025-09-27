@@ -1,6 +1,6 @@
 import { generateContent, AIResponse } from './ai';
 import { NewsItem } from './news-fetcher';
-import { formatNorwegianDate } from './timezone';
+import { formatNewsletterDate, formatNorwegianDate } from './timezone';
 
 export interface DigestContent {
   dateLabel: string;
@@ -91,7 +91,7 @@ export async function processNewsIntoDigest(
     // Return fallback content if no news
     return {
       content: {
-        dateLabel: formatNorwegianDate(),
+        dateLabel: formatNewsletterDate(),
         lead: 'I dag har vi ikke funnet nye KI-nyheter som møter våre kriterier. Vi fortsetter å overvåke situasjonen.',
         sections: [{
           heading: 'Status',

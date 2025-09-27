@@ -1,0 +1,5 @@
+1.Remove Budbringer-logo from header. Replace with the name Budbringer instead, alligned center (horisontally). Do a smart adjustment so it blends/migrates well with the "tag box" with the dot and "DAGLIG KI-BRIEF" inside.
+2.Use capital letter for the first letter of the weekday in the header. Example: Lørdag 27. september.
+3.skip displaying the year in the actual newsletter (subject and body header). the year, together with the date/date and time is only inmportant regarding fetching/collecting news and to avoid repeating the excact same news over again)
+4.fix spacing all through the newsletter template. consistent and best practice according to todays UI-standards. pay special attention to the content in the bottom. the space between the bottom of the numbered list and the info component box with "Meld deg av nyhetsbrevet" for instance is especially very tight.
+5.Duplicate number in the numbered list in the bottom. keep the blue numbers.

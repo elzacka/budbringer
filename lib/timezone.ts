@@ -38,6 +38,21 @@ export function formatNorwegianDate(date: Date = new Date()): string {
 }
 
 /**
+ * Format date for newsletter header (no year, capitalized weekday)
+ */
+export function formatNewsletterDate(date: Date = new Date()): string {
+  const formatted = date.toLocaleDateString(NORWEGIAN_LOCALE, {
+    timeZone: OSLO_TIMEZONE,
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric'
+  });
+
+  // Capitalize first letter of weekday
+  return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+}
+
+/**
  * Format date and time for Norwegian locale in Oslo timezone
  */
 export function formatNorwegianDateTime(date: Date = new Date()): string {

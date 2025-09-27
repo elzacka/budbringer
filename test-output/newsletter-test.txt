@@ -29,4 +29,4 @@ Lytt til dagens briefing: https://budbringer.no/audio/2025-09-27
 
 ---
 Administrer abonnementet ditt: {{unsubscribe_url}}
-Slett alle data (GDPR): https://budbringer.no/gdpr/delete
+Alle personopplysninger slettes automatisk ved avmelding (GDPR-kompatibelt)

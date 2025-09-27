@@ -14,10 +14,6 @@ interface DigestEmailPayload {
   audioUrl?: string | null;
 }
 
-const PUBLIC_BASE_URL = process.env.PUBLIC_SITE_URL ? process.env.PUBLIC_SITE_URL.replace(/\/$/, '') : '';
-const LOGO_PATH = '/budbringer-logo.svg';
-const LOGO_URL = PUBLIC_BASE_URL ? `${PUBLIC_BASE_URL}${encodeURI(LOGO_PATH)}` : null;
-
 export function renderDigestHtml(payload: DigestEmailPayload) {
   // Process markdown formatting
   const processedContent = processDigestContentMarkdown(payload);
@@ -27,20 +23,20 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
   const sectionHtml = sections
     .map(
       (section) => `
-        <section style="margin-bottom: 32px;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+        <section style="margin-bottom: 40px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
             <div style="width: 3px; height: 20px; background: linear-gradient(135deg, #38bdf8, #0ea5e9); border-radius: 2px;"></div>
             <h2 style="font-size: 19px; margin: 0; color: #0f172a; font-weight: 600;">${section.heading}</h2>
           </div>
           <ul style="padding-left: 20px; margin: 0; list-style: none;">
             ${section.bullets.map((bullet) =>
-              `<li style="margin-bottom: 10px; color: #1e293b; line-height: 1.6; position: relative;">
+              `<li style="margin-bottom: 12px; color: #1e293b; line-height: 1.6; position: relative;">
                 <span style="position: absolute; left: -16px; top: 8px; width: 4px; height: 4px; background: #0ea5e9; border-radius: 50%;"></span>
                 ${bullet}
               </li>`
             ).join('')}
           </ul>
-          ${section.link ? `<p style="margin-top: 12px;"><a href="${section.link}" style="color: #0ea5e9; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">Les mer →</a></p>` : ''}
+          ${section.link ? `<p style="margin-top: 16px;"><a href="${section.link}" style="color: #0ea5e9; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px;">Les mer →</a></p>` : ''}
         </section>
       `
     )
@@ -48,20 +44,21 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
 
   const actionsHtml = actions?.length
     ? `
-      <section style="margin-top: 40px; padding: 24px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 16px; border: 1px solid #bae6fd;">
+      <section style="margin-top: 48px; padding: 24px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 16px; border: 1px solid #bae6fd;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
           <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
             <span style="color: white; font-size: 10px; font-weight: bold;">✓</span>
           </div>
           <h3 style="font-size: 17px; margin: 0; color: #0f172a; font-weight: 600;">Hva bør du gjøre?</h3>
         </div>
-        <ol style="padding-left: 20px; margin: 0; color: #1e293b;">
+        <div style="padding-left: 0; margin: 0; color: #1e293b;">
           ${actions.map((action, index) =>
-            `<li style="margin-bottom: 8px; line-height: 1.6; counter-increment: step-counter;">
-              <span style="font-weight: 500; color: #0ea5e9;">${index + 1}.</span> ${action}
-            </li>`
+            `<div style="margin-bottom: 12px; line-height: 1.6; display: flex; align-items: flex-start; gap: 12px;">
+              <span style="font-weight: 600; color: #0ea5e9; font-size: 15px; min-width: 24px; text-align: center; margin-top: 1px;">${index + 1}.</span>
+              <span style="flex: 1;">${action}</span>
+            </div>`
           ).join('')}
-        </ol>
+        </div>
       </section>
     `
     : '';
@@ -82,16 +79,13 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
     `
     : '';
 
-  const logoBlock = LOGO_URL
-    ? `<img src="${LOGO_URL}" alt="Budbringer" style="height: 72px; width: auto; display: block; margin-bottom: 20px;" />`
-    : `<div style="margin-bottom: 20px;">
-        <h1 style="font-size: 32px; font-weight: 700; color: #0f172a; margin: 0; letter-spacing: -0.02em;">Budbringer</h1>
-       </div>`;
-
-  const badgeBlock = `
-    <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 999px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(14, 165, 233, 0.15)); border: 1px solid rgba(56, 189, 248, 0.3); margin-bottom: 16px;">
-      <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #38bdf8, #0ea5e9); border-radius: 50%;"></div>
-      <span style="color: #0f172a; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">Daglig KI-brief</span>
+  const headerBlock = `
+    <div style="text-align: center; margin-bottom: 24px;">
+      <h1 style="font-size: 32px; font-weight: 700; color: #0f172a; margin: 0 0 12px 0; letter-spacing: -0.02em;">Budbringer</h1>
+      <div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 20px; border-radius: 999px; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(14, 165, 233, 0.15)); border: 1px solid rgba(56, 189, 248, 0.3);">
+        <div style="width: 8px; height: 8px; background: linear-gradient(135deg, #38bdf8, #0ea5e9); border-radius: 50%;"></div>
+        <span style="color: #0f172a; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;">Daglig KI-brief</span>
+      </div>
     </div>`;
 
   return `
@@ -108,10 +102,9 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
 
         <!-- Header Card -->
         <header style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 24px; padding: 40px 36px; margin-bottom: 32px; box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08), 0 8px 20px rgba(15, 23, 42, 0.04); border: 1px solid rgba(255, 255, 255, 0.8);">
-          ${logoBlock}
-          ${badgeBlock}
-          <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 20px 0; color: #0f172a; letter-spacing: -0.02em; line-height: 1.2;">${dateLabel}</h1>
-          <div style="font-size: 18px; color: #475569; line-height: 1.7; margin-bottom: 16px;">
+          ${headerBlock}
+          <h1 style="font-size: 32px; font-weight: 700; margin: 0 0 24px 0; color: #0f172a; letter-spacing: -0.02em; line-height: 1.2; text-align: center;">${dateLabel}</h1>
+          <div style="font-size: 18px; color: #475569; line-height: 1.7; margin-bottom: 20px;">
             ${lead}
           </div>
           ${audioBlock}
@@ -124,16 +117,16 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
         </main>
 
         <!-- Footer -->
-        <footer style="margin-top: 40px; text-align: center; padding: 0 20px;">
-          <div style="background: rgba(255, 255, 255, 0.6); border-radius: 16px; padding: 24px; border: 1px solid rgba(255, 255, 255, 0.8);">
-            <p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b; line-height: 1.5;">
+        <footer style="margin-top: 56px; text-align: center; padding: 0 20px;">
+          <div style="background: rgba(255, 255, 255, 0.6); border-radius: 16px; padding: 28px; border: 1px solid rgba(255, 255, 255, 0.8);">
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: #64748b; line-height: 1.5;">
               Du får denne e-posten fordi du har meldt deg på Budbringers daglige KI-brief.
             </p>
-            <p style="margin: 0; font-size: 13px; color: #64748b;">
+            <p style="margin: 0 0 8px 0; font-size: 13px; color: #64748b;">
               <a href="{{unsubscribe_url}}" style="color: #0ea5e9; text-decoration: none; font-weight: 500;">Meld deg av nyhetsbrevet</a>
             </p>
-            <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">
-              Alle personopplysninger slettes automatisk ved avmelding (GDPR-kompatibelt)
+            <p style="margin: 0; font-size: 11px; color: #94a3b8;">
+              Alle personopplysninger slettes automatisk når du trykker på "Meld deg av nyhetsbrevet"
             </p>
           </div>
         </footer>
