@@ -3,6 +3,8 @@ import { getSupabaseServiceClient } from './supabase-admin';
 import { getDaysAgoOslo, getNowOsloISO } from './timezone';
 import { deduplicateArticles } from './deduplication';
 import { getCachedFeed, setCachedFeed } from './feed-cache';
+import { circuitBreakerRegistry } from './circuit-breaker';
+import { updateSourceReliability } from './source-reliability';
 
 export interface NewsItem {
   title: string;
@@ -39,36 +41,45 @@ const parser = new Parser({
 });
 
 export async function fetchRSSFeed(url: string, useCache: boolean = true): Promise<NewsItem[]> {
+  if (useCache) {
+    const cached = await getCachedFeed(url);
+    if (cached) {
+      return cached;
+    }
+  }
+
+  const breaker = circuitBreakerRegistry.getOrCreate(`rss-feed-${url}`, {
+    failureThreshold: 3,
+    successThreshold: 2,
+    timeout: 15000,
+    resetTimeout: 300000
+  });
+
   try {
-    if (useCache) {
-      const cached = await getCachedFeed(url);
-      if (cached) {
-        return cached;
+    const items = await breaker.execute(async () => {
+      console.log(`Fetching RSS feed: ${url}`);
+
+      const feed = await parser.parseURL(url);
+
+      if (!feed.items || feed.items.length === 0) {
+        console.warn(`No items found in RSS feed: ${url}`);
+        return [];
       }
-    }
 
-    console.log(`Fetching RSS feed: ${url}`);
+      return feed.items.map((item): NewsItem => {
+        const publishedDate = item.pubDate || item.isoDate || getNowOsloISO();
+        const content = (item as { contentEncoded?: string }).contentEncoded || item.content || '';
 
-    const feed = await parser.parseURL(url);
-
-    if (!feed.items || feed.items.length === 0) {
-      console.warn(`No items found in RSS feed: ${url}`);
-      return [];
-    }
-
-    const items = feed.items.map((item): NewsItem => {
-      const publishedDate = item.pubDate || item.isoDate || getNowOsloISO();
-      const content = (item as { contentEncoded?: string }).contentEncoded || item.content || '';
-
-      return {
-        title: item.title || 'No Title',
-        description: item.contentSnippet || item.summary || '',
-        url: item.link || item.guid || '',
-        published_at: publishedDate,
-        source: feed.title || 'Unknown',
-        content: content
-      };
-    }).filter(item => item.url && item.title);
+        return {
+          title: item.title || 'No Title',
+          description: item.contentSnippet || item.summary || '',
+          url: item.link || item.guid || '',
+          published_at: publishedDate,
+          source: feed.title || 'Unknown',
+          content: content
+        };
+      }).filter(item => item.url && item.title);
+    });
 
     if (useCache) {
       await setCachedFeed(url, items, 30);
@@ -176,6 +187,8 @@ export async function fetchNewsFromSources(pipelineId: number): Promise<NewsItem
         }
 
         console.log(`Found ${sourceNews.length} relevant articles from ${source.name}`);
+
+        await updateSourceReliability(source.id, true);
       } else {
         console.warn(`Source type '${source.type}' not implemented yet for ${source.name}`);
         continue;
@@ -194,7 +207,7 @@ export async function fetchNewsFromSources(pipelineId: number): Promise<NewsItem
       console.error(errorMsg);
       errors.push(errorMsg);
 
-      // Continue with other sources even if one fails
+      await updateSourceReliability(source.id, false);
     }
   }
 

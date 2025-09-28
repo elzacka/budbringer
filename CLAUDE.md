@@ -9,7 +9,10 @@ Welcome, Claude! This file contains essential information about the Budbringer c
 **Key Features:**
 - AI-powered content generation using Claude Sonnet 4
 - RSS feed aggregation with rss-parser library for TypeScript support
+- Circuit breaker pattern for resilient API calls with automatic recovery
+- Source reliability scoring system for content quality weighting
 - LSH-based deduplication system (80%+ similarity detection)
+- Semantic search with pgvector for advanced similarity detection
 - Multi-tier feed caching with 30-minute TTL for performance
 - Robots.txt compliance checker for ethical crawling
 - Email dispatch via Cloudflare Workers + Resend with modern design
@@ -33,8 +36,8 @@ Welcome, Claude! This file contains essential information about the Budbringer c
 ### Database Schema (Key Tables)
 - `digest_runs` - Tracks digest generation attempts with metrics
 - `subscribers` - Email newsletter subscribers with status management
-- `content_items` - Stores article content with full text (includes recent 'content' column)
-- `content_sources` - RSS feed sources with robots.txt compliance
+- `content_items` - Stores article content with full text (includes 'content' column and 'embedding' vector(1536) for semantic search)
+- `content_sources` - RSS feed sources with robots.txt compliance and reliability scoring (reliability_score, fetch_success_rate, historical_accuracy)
 - `pipelines` - Content processing pipelines
 - `prompts` - AI generation prompts with versioning
 - `error_logs` - System errors with GDPR anonymization support
@@ -54,6 +57,7 @@ SUPABASE_SECRET_KEY=
 
 # AI Models
 ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
 
 # Email Dispatch
 RESEND_API_KEY=
@@ -137,7 +141,10 @@ components/
 
 lib/
 ├── queries.ts               # Database query functions
-├── news-fetcher.ts          # RSS feed fetching with rss-parser library
+├── news-fetcher.ts          # RSS feed fetching with rss-parser library and circuit breaker
+├── circuit-breaker.ts       # Circuit breaker pattern for resilient API calls
+├── source-reliability.ts    # Multi-factor source reliability scoring system
+├── semantic-search.ts       # OpenAI embeddings and pgvector semantic search
 ├── deduplication.ts         # LSH-based article deduplication (80%+ similarity)
 ├── feed-cache.ts            # RSS feed caching layer with 30-minute TTL
 ├── robots-checker.ts        # Robots.txt compliance checking
@@ -247,6 +254,74 @@ Built-in delays between RSS source fetches:
 if (i > 0) {
   await new Promise(resolve => setTimeout(resolve, 500)); // 500ms between sources
 }
+```
+
+### 6. Circuit Breaker Pattern
+Resilient API calls with automatic failure recovery:
+```typescript
+// Create per-feed circuit breaker
+const breaker = circuitBreakerRegistry.getOrCreate(`rss-feed-${url}`, {
+  failureThreshold: 3,      // Open after 3 failures
+  successThreshold: 2,      // Close after 2 successes
+  timeout: 15000,           // 15s operation timeout
+  resetTimeout: 300000      // 5min before retry
+});
+
+// Execute with circuit breaker protection
+const items = await breaker.execute(async () => {
+  const feed = await parser.parseURL(url);
+  return feed.items;
+});
+
+// Primary + fallback pattern
+const result = await executeWithFallbacks(
+  'ai-generation',
+  () => callClaude(),
+  [() => callOpenAI(), () => callLocalModel()]
+);
+```
+
+### 7. Source Reliability Scoring
+Multi-factor weighted scoring for content quality:
+```typescript
+// Automatic tracking on every fetch
+await updateSourceReliability(sourceId, fetchSuccess);
+
+// Scoring weights
+const RELIABILITY_WEIGHTS = {
+  historicalAccuracy: 0.30,  // Historical fact-checking
+  fetchSuccessRate: 0.25,    // Fetch reliability
+  contentQuality: 0.20,      // Content analysis
+  expertEndorsement: 0.15,   // Tier-based scoring
+  socialSignals: 0.10        // Social proof
+};
+
+// Tier-based scoring for known sources
+const NORWEGIAN_TIER1 = ['nrk.no', 'aftenposten.no', 'dn.no'];
+const TECH_TIER1 = ['techcrunch.com', 'arstechnica.com'];
+```
+
+### 8. Semantic Search with pgvector
+OpenAI embeddings for advanced similarity:
+```typescript
+// Generate embedding from article
+const embedding = await generateArticleEmbedding(article);
+
+// Store in database with pgvector
+await storeArticleEmbedding(articleId, embedding);
+
+// Find similar articles
+const similar = await findSimilarArticles(
+  queryEmbedding,
+  limit: 10,
+  minSimilarity: 0.80
+);
+
+// Semantic deduplication (90% similarity)
+const unique = await deduplicateBySemanticSimilarity(
+  articles,
+  threshold: 0.90
+);
 ```
 
 ## Common Issues & Solutions
@@ -391,6 +466,15 @@ npx tsx scripts/test-domain-config.ts    # Test domain configuration
 - **Security**: Environment encryption with dotenvx and HMAC signatures
 
 ### 🎉 Recent Improvements (September 2025)
+
+**Phase 2 (Latest):**
+- **Implemented**: Circuit breaker pattern for resilient RSS feed fetching and API calls
+- **Added**: Multi-factor source reliability scoring system with automatic tracking
+- **Integrated**: pgvector extension with OpenAI embeddings for semantic search
+- **Enhanced**: Semantic similarity detection and deduplication capabilities
+- **Created**: Database migrations for reliability metrics and vector embeddings
+
+**Phase 1:**
 - **Fixed**: Database schema issues with content column migration
 - **Enhanced**: Email design with modern styling and markdown support
 - **Implemented**: Simplified one-click GDPR-compliant unsubscribe system
@@ -421,6 +505,6 @@ npx tsx scripts/test-domain-config.ts    # Test domain configuration
 
 ---
 
-**Last Updated**: September 27, 2025
+**Last Updated**: September 28, 2025
 **Primary Maintainer**: Lene Zachariassen
 **Claude Model Used**: claude-sonnet-4-20250514
