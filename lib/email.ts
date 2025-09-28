@@ -1,18 +1,5 @@
 import { processDigestContentMarkdown, processDigestContentText } from './markdown-utils';
-
-interface DigestSection {
-  heading: string;
-  bullets: string[];
-  link?: string;
-}
-
-interface DigestEmailPayload {
-  dateLabel: string;
-  lead: string;
-  sections: DigestSection[];
-  actions?: string[];
-  audioUrl?: string | null;
-}
+import { DigestEmailPayload } from './types';
 
 export function renderDigestHtml(payload: DigestEmailPayload) {
   // Process markdown formatting
@@ -30,12 +17,16 @@ export function renderDigestHtml(payload: DigestEmailPayload) {
           </div>
           <div style="padding-left: 21px;">
             <ul style="padding: 0; margin: 0; list-style: none;">
-              ${section.bullets.map((bullet) =>
-                `<li style="margin-bottom: 20px; color: #475569; line-height: 1.7; position: relative; padding-left: 24px; font-size: 16px; font-weight: 400;">
+              ${section.bullets.map((bullet) => {
+                const bulletText = typeof bullet === 'string' ? bullet : bullet.text;
+                const sourceLink = typeof bullet === 'object' && bullet.sourceUrl && bullet.sourceName
+                  ? `<div style="margin-top: 8px; font-size: 14px;"><a href="${bullet.sourceUrl}" style="color: #64748b; text-decoration: none; font-weight: 500; border-bottom: 1px solid rgba(100, 116, 139, 0.3); transition: all 0.2s;" onmouseover="this.style.color='#0ea5e9'; this.style.borderColor='rgba(14, 165, 233, 0.5)'" onmouseout="this.style.color='#64748b'; this.style.borderColor='rgba(100, 116, 139, 0.3)'">Kilde: ${bullet.sourceName}</a></div>`
+                  : '';
+                return `<li style="margin-bottom: 20px; color: #475569; line-height: 1.7; position: relative; padding-left: 24px; font-size: 16px; font-weight: 400;">
                   <span style="position: absolute; left: 0; top: 12px; width: 7px; height: 7px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border-radius: 50%; opacity: 0.9; box-shadow: 0 1px 3px rgba(14, 165, 233, 0.3);"></span>
-                  ${bullet}
-                </li>`
-              ).join('')}
+                  ${bulletText}${sourceLink}
+                </li>`;
+              }).join('')}
             </ul>
             ${section.link ? `<div style="margin-top: 28px; padding-left: 24px;"><a href="${section.link}" style="color: #0ea5e9; text-decoration: none; font-weight: 600; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; border-radius: 8px; padding: 12px 18px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(14, 165, 233, 0.06)); border: 1px solid rgba(14, 165, 233, 0.15); transition: all 0.2s; box-shadow: 0 2px 4px rgba(14, 165, 233, 0.1);">Les mer <span style="font-size: 14px; font-weight: 700;">→</span></a></div>` : ''}
           </div>
@@ -147,7 +138,13 @@ export function renderDigestText(payload: DigestEmailPayload) {
 
   const sectionText = sections
     .map((section) => {
-      const bullets = section.bullets.map((bullet) => `  • ${bullet}`).join('\n');
+      const bullets = section.bullets.map((bullet) => {
+        const bulletText = typeof bullet === 'string' ? bullet : bullet.text;
+        const sourceLine = typeof bullet === 'object' && bullet.sourceUrl && bullet.sourceName
+          ? `\n    Kilde: ${bullet.sourceName} (${bullet.sourceUrl})`
+          : '';
+        return `  • ${bulletText}${sourceLine}`;
+      }).join('\n');
       const linkLine = section.link ? `\n  Les mer: ${section.link}` : '';
       return `${section.heading}\n${bullets}${linkLine}`;
     })

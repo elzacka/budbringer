@@ -1,24 +1,7 @@
 import { generateContent, AIResponse } from './ai';
 import { NewsItem } from './news-fetcher';
 import { formatNewsletterDate, formatNorwegianDate } from './timezone';
-
-export interface DigestBullet {
-  text: string;
-  sourceUrl?: string;
-  sourceName?: string;
-}
-
-export type DigestBulletItem = string | DigestBullet;
-
-export interface DigestContent {
-  dateLabel: string;
-  lead: string;
-  sections: {
-    heading: string;
-    bullets: DigestBulletItem[];
-  }[];
-  actions: string[];
-}
+import { DigestContent } from './types';
 
 export interface ProcessingResult {
   content: DigestContent;

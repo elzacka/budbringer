@@ -3,6 +3,8 @@
  * Converts basic markdown formatting to HTML
  */
 
+import { DigestEmailPayload } from './types';
+
 export function processMarkdownToHtml(text: string): string {
   if (!text) return text;
 
@@ -50,24 +52,23 @@ export function processMarkdownToText(text: string): string {
 /**
  * Process digest content to handle markdown formatting
  */
-export function processDigestContentMarkdown(content: {
-  dateLabel: string;
-  lead: string;
-  sections: Array<{
-    heading: string;
-    bullets: string[];
-    link?: string;
-  }>;
-  actions?: string[];
-  audioUrl?: string | null;
-}): typeof content {
+export function processDigestContentMarkdown(content: DigestEmailPayload): DigestEmailPayload {
   return {
     ...content,
     lead: processMarkdownToHtml(content.lead),
     sections: content.sections.map(section => ({
       ...section,
       heading: processMarkdownToHtml(section.heading),
-      bullets: section.bullets.map(bullet => processMarkdownToHtml(bullet))
+      bullets: section.bullets.map(bullet => {
+        if (typeof bullet === 'string') {
+          return processMarkdownToHtml(bullet);
+        } else {
+          return {
+            ...bullet,
+            text: processMarkdownToHtml(bullet.text)
+          };
+        }
+      })
     })),
     actions: content.actions ? content.actions.map(action => processMarkdownToHtml(action)) : undefined
   };
@@ -76,24 +77,23 @@ export function processDigestContentMarkdown(content: {
 /**
  * Process digest content for plain text output
  */
-export function processDigestContentText(content: {
-  dateLabel: string;
-  lead: string;
-  sections: Array<{
-    heading: string;
-    bullets: string[];
-    link?: string;
-  }>;
-  actions?: string[];
-  audioUrl?: string | null;
-}): typeof content {
+export function processDigestContentText(content: DigestEmailPayload): DigestEmailPayload {
   return {
     ...content,
     lead: processMarkdownToText(content.lead),
     sections: content.sections.map(section => ({
       ...section,
       heading: processMarkdownToText(section.heading),
-      bullets: section.bullets.map(bullet => processMarkdownToText(bullet))
+      bullets: section.bullets.map(bullet => {
+        if (typeof bullet === 'string') {
+          return processMarkdownToText(bullet);
+        } else {
+          return {
+            ...bullet,
+            text: processMarkdownToText(bullet.text)
+          };
+        }
+      })
     })),
     actions: content.actions ? content.actions.map(action => processMarkdownToText(action)) : undefined
   };
