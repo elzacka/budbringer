@@ -8,7 +8,10 @@ Welcome, Claude! This file contains essential information about the Budbringer c
 
 **Key Features:**
 - AI-powered content generation using Claude Sonnet 4
-- RSS feed aggregation from multiple sources with robots.txt compliance
+- RSS feed aggregation with rss-parser library for TypeScript support
+- LSH-based deduplication system (80%+ similarity detection)
+- Multi-tier feed caching with 30-minute TTL for performance
+- Robots.txt compliance checker for ethical crawling
 - Email dispatch via Cloudflare Workers + Resend with modern design
 - Admin interface for managing prompts, sources, and digest runs
 - Norwegian localization (no-NO) and Oslo timezone (Europe/Oslo)
@@ -35,6 +38,7 @@ Welcome, Claude! This file contains essential information about the Budbringer c
 - `pipelines` - Content processing pipelines
 - `prompts` - AI generation prompts with versioning
 - `error_logs` - System errors with GDPR anonymization support
+- `feed_cache` - RSS feed cache with TTL for performance optimization (30-minute default)
 
 ## Critical Environment Variables
 
@@ -133,7 +137,10 @@ components/
 
 lib/
 ├── queries.ts               # Database query functions
-├── news-fetcher.ts          # RSS feed fetching with robots.txt compliance
+├── news-fetcher.ts          # RSS feed fetching with rss-parser library
+├── deduplication.ts         # LSH-based article deduplication (80%+ similarity)
+├── feed-cache.ts            # RSS feed caching layer with 30-minute TTL
+├── robots-checker.ts        # Robots.txt compliance checking
 ├── ai-processor.ts          # AI content generation
 ├── content-processor.ts     # News processing and digest generation
 ├── supabase-admin.ts        # Supabase service client

@@ -1,6 +1,8 @@
-import { XMLParser } from 'fast-xml-parser';
+import Parser from 'rss-parser';
 import { getSupabaseServiceClient } from './supabase-admin';
-import { getDaysAgoOslo, getNowOsloISO, parseOsloDate } from './timezone';
+import { getDaysAgoOslo, getNowOsloISO } from './timezone';
+import { deduplicateArticles } from './deduplication';
+import { getCachedFeed, setCachedFeed } from './feed-cache';
 
 export interface NewsItem {
   title: string;
@@ -23,70 +25,56 @@ export interface ContentSource {
   active: boolean;
 }
 
-const xmlParser = new XMLParser({
-  ignoreAttributes: false,
-  attributeNamePrefix: '@_'
+const parser = new Parser({
+  timeout: 10000,
+  headers: {
+    'User-Agent': 'Budbringer-Bot/1.0 (+https://budbringer.no)',
+  },
+  customFields: {
+    item: [
+      ['content:encoded', 'contentEncoded'],
+      ['dc:creator', 'creator']
+    ]
+  }
 });
 
-export async function fetchRSSFeed(url: string): Promise<NewsItem[]> {
+export async function fetchRSSFeed(url: string, useCache: boolean = true): Promise<NewsItem[]> {
   try {
+    if (useCache) {
+      const cached = await getCachedFeed(url);
+      if (cached) {
+        return cached;
+      }
+    }
+
     console.log(`Fetching RSS feed: ${url}`);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const feed = await parser.parseURL(url);
 
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Budbringer-Bot/1.0 (+https://budbringer.no)',
-      },
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    if (!feed.items || feed.items.length === 0) {
+      console.warn(`No items found in RSS feed: ${url}`);
+      return [];
     }
 
-    const xmlText = await response.text();
-    const xmlData = xmlParser.parse(xmlText);
-
-    // Handle different RSS formats
-    const channel = xmlData.rss?.channel || xmlData.feed;
-    if (!channel) {
-      throw new Error('Invalid RSS/Atom feed format');
-    }
-
-    const items = channel.item || channel.entry || [];
-    const itemArray = Array.isArray(items) ? items : [items];
-
-    return itemArray.map((item: Record<string, unknown>): NewsItem => {
-      // Handle different date formats
-      let publishedDate = item.pubDate || item.published || item['dc:date'] || getNowOsloISO();
-
-      // Convert to ISO string if needed
-      if (typeof publishedDate === 'string' && !publishedDate.includes('T')) {
-        const parsedDate = parseOsloDate(publishedDate);
-        publishedDate = parsedDate.toISOString();
-      }
-
-      const title = (item.title as Record<string, unknown>)?.['#text'] || item.title || 'No Title';
-      const description = (item.description as Record<string, unknown>)?.['#text'] || item.description ||
-                         (item.summary as Record<string, unknown>)?.['#text'] || item.summary || '';
-      const url = (item.link as Record<string, unknown>)?.['@_href'] || item.link ||
-                  (item.guid as Record<string, unknown>)?.['#text'] || item.guid || '';
-      const source = (channel.title as Record<string, unknown>)?.['#text'] || channel.title || 'Unknown';
-      const content = item['content:encoded'] || (item.content as Record<string, unknown>)?.['#text'] || item.content || '';
+    const items = feed.items.map((item): NewsItem => {
+      const publishedDate = item.pubDate || item.isoDate || getNowOsloISO();
+      const content = (item as { contentEncoded?: string }).contentEncoded || item.content || '';
 
       return {
-        title: String(title),
-        description: String(description),
-        url: String(url),
-        published_at: String(publishedDate),
-        source: String(source),
-        content: String(content)
+        title: item.title || 'No Title',
+        description: item.contentSnippet || item.summary || '',
+        url: item.link || item.guid || '',
+        published_at: publishedDate,
+        source: feed.title || 'Unknown',
+        content: content
       };
     }).filter(item => item.url && item.title);
+
+    if (useCache) {
+      await setCachedFeed(url, items, 30);
+    }
+
+    return items;
 
   } catch (error) {
     console.error(`Error fetching RSS from ${url}:`, error);
@@ -216,26 +204,13 @@ export async function fetchNewsFromSources(pipelineId: number): Promise<NewsItem
     console.warn(`Encountered ${errors.length} errors during news fetching:`, errors);
   }
 
-  // Sort by date (newest first) and remove duplicates
-  const uniqueNews = removeDuplicates(allNews);
+  const uniqueNews = deduplicateArticles(allNews, true, 0.8);
+
   const sortedNews = uniqueNews.sort((a, b) =>
     new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
   );
 
   return sortedNews;
-}
-
-function removeDuplicates(items: NewsItem[]): NewsItem[] {
-  const seen = new Set<string>();
-  return items.filter(item => {
-    // Use URL as primary deduplication key, fallback to title
-    const key = item.url || item.title.toLowerCase().trim();
-    if (seen.has(key)) {
-      return false;
-    }
-    seen.add(key);
-    return true;
-  });
 }
 
 export async function storeContentItems(pipelineId: number, items: NewsItem[]): Promise<void> {
