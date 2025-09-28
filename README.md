@@ -9,19 +9,6 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-2.57.4-green?logo=supabase)](https://supabase.com/)
 
-## 🏗️ Architecture
-
-- **Frontend**: Next.js 15 app with React 19 for public landing page and admin panel
-- **Database**: Supabase PostgreSQL with migrations for subscribers, prompts, and run logs
-- **AI Models**: Anthropic Claude Sonnet 4 (Sept 2025) and OpenAI GPT-4o for intelligent content generation
-- **Automation**: Daily GitHub Actions workflow for content generation
-- **Email Delivery**: Cloudflare Worker with Resend for reliable email sending with modern design
-- **Security**: Environment encryption with dotenvx public-key encryption
-- **Styling**: Tailwind CSS 3.4 for modern, responsive design with markdown processing
-- **Subscriber Management**: Approval workflow for new subscriber requests
-- **GDPR Compliance**: Complete data deletion system with user interface
-- **External Integration**: API endpoints for unsubscribe handling on external websites
-
 ## 🚀 Tech Stack
 
 | Category | Technology | Version | Purpose |
@@ -29,13 +16,15 @@ Budbringer is a fully automated AI newsletter system that generates and delivers
 | **Frontend** | Next.js | 15.5.4 | React framework with App Router |
 | **UI Library** | React | 19.1.1 | Component library |
 | **Language** | TypeScript | 5.9.2 | Type-safe development |
-| **Database** | Supabase | 2.57.4 | PostgreSQL with real-time features |
+| **Database** | Supabase | 2.57.4 | PostgreSQL with migrations and RLS |
 | **Auth** | Supabase SSR | 0.7.0 | Server-side authentication |
-| **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS framework |
+| **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS with markdown processing |
 | **AI Models** | Anthropic SDK | 0.63.1 | Claude Sonnet 4 (Sept 2025) integration |
-| **AI Models** | OpenAI SDK | 5.23.0 | GPT integration |
+| **AI Models** | OpenAI SDK | 5.23.0 | GPT-4o fallback integration |
 | **Email** | Resend | - | Modern transactional email delivery |
 | **Deployment** | Cloudflare Workers | - | Serverless email dispatcher |
+| **Automation** | GitHub Actions | - | Daily digest generation (05:30 Oslo time) |
+| **Security** | dotenvx | - | Environment encryption with public-key cryptography |
 | **Linting** | ESLint | 9.36.0 | Code quality and consistency |
 
 ## 🏁 Getting Started
@@ -115,64 +104,44 @@ Create `.env.local` with the following variables:
 
 *At least one AI API key (Anthropic or OpenAI) is required for content generation.
 
-## 🔄 Production Workflow
+## 🔄 Daily Workflow
 
-The automated newsletter generation follows this workflow (all times in Oslo/Europe timezone):
-
-1. **Daily Trigger**: GitHub Actions workflow runs at 05:30 CET/CEST (Oslo time)
-2. **Content Generation**: `scripts/dailyDigest.ts` processes news sources using Claude Sonnet 4
-3. **Data Storage**: Results saved to `digest_runs` and `content_items` tables with Oslo timestamps
-4. **Email Dispatch**: Cloudflare Worker triggered via secure webhook
-5. **Delivery**: Worker fetches latest digest and sends via Resend
-
-### 👥 Subscriber Management
-
-New subscribers go through an approval process:
-
-1. **Subscription**: Users submit email via landing page form
-2. **Pending Status**: New subscribers get `pending` status requiring admin approval
-3. **Admin Review**: Admins approve/reject subscribers via `/admin/pending` interface
-4. **Email Delivery**: Only `confirmed` subscribers receive daily newsletters
-
-### 📧 Simplified Unsubscribe & GDPR System
-
-One-click unsubscribe with automatic GDPR compliance:
-
-1. **Secure Links**: Newsletter contains signed unsubscribe link with HMAC verification
-2. **Automatic Data Deletion**: Single click completely removes all personal data (GDPR-compliant)
-3. **Background Processing**: Email anonymization and subscriber deletion happens automatically
-4. **External Redirect**: Users redirected to confirmation page on external website
-5. **Audit Logging**: Complete compliance trail without storing personal information
-6. **No Complex Forms**: Simple user experience without multi-step confirmation processes
+Automated newsletter generation runs at **05:30 Oslo time** via GitHub Actions:
 
 ```mermaid
 graph TD
-    A[GitHub Actions<br/>Daily 05:30 Oslo Time] --> B[Fetch News Sources]
+    A[GitHub Actions<br/>05:30 Oslo Time] --> B[Fetch News Sources]
     B --> C[AI Processing<br/>Claude Sonnet 4]
-    C --> D[Store in Supabase<br/>digest_runs table<br/>Oslo timezone]
+    C --> D[Store in Supabase]
     D --> E[Trigger Webhook]
     E --> F[Cloudflare Worker]
-    F --> G[Render Email Template<br/>Oslo timestamps]
+    F --> G[Render Email Template]
     G --> H[Send via Resend]
-    H --> I[Delivered to Subscribers]
+    H --> I[Confirmed Subscribers]
 ```
 
-## 🤖 AI-Powered Content Generation
+### 👥 Subscriber Approval Flow
 
-Budbringer leverages cutting-edge AI technology for intelligent newsletter curation:
+New subscribers require admin approval before receiving newsletters:
+1. User submits email → `pending` status
+2. Admin approves/rejects via `/admin/pending` interface
+3. Only `confirmed` subscribers receive daily newsletters
 
-### **Claude Sonnet 4 (September 2025)**
-- **Latest Model**: Updated to Anthropic's newest Claude Sonnet 4 (claude-sonnet-4-20250514)
-- **High Performance**: Exceptional reasoning capabilities optimized for content creation
-- **Cost Efficient**: 5x more cost-effective than Opus while maintaining excellent quality
-- **Large Context**: Supports up to 1M token context window for processing multiple news sources
-- **Norwegian Optimization**: Fine-tuned prompts for Norwegian language and cultural context
+### 📧 One-Click Unsubscribe (GDPR Article 17)
 
-### **Intelligent News Processing**
-- **Multi-Source Aggregation**: Fetches from NRK, ITavisen, TechCrunch, MIT Tech Review, and more
-- **Relevance Filtering**: AI-powered keyword matching and content analysis
-- **Content Synthesis**: Transforms raw news into structured Norwegian newsletter format
-- **Quality Control**: Validates output format and ensures consistent newsletter structure
+- **Secure Links**: HMAC-signed unsubscribe URLs
+- **Automatic Deletion**: Complete data removal with single click
+- **Background Processing**: Email anonymization and subscriber deletion
+- **Audit Logging**: Compliance trail without storing personal information
+
+## 🤖 AI Content Generation
+
+**Claude Sonnet 4 (Sept 2025)** powers the newsletter with:
+- **1M token context window** for processing multiple news sources simultaneously
+- **Norwegian-optimized prompts** for cultural context and language nuances
+- **Multi-source aggregation** from NRK, ITavisen, TechCrunch, MIT Tech Review, and more
+- **Automatic content synthesis** into structured Norwegian newsletter format
+- **GPT-4o fallback** for redundancy
 
 ## 📊 Available Scripts
 
@@ -199,18 +168,11 @@ Budbringer leverages cutting-edge AI technology for intelligent newsletter curat
 
 - **Dashboard** (`/admin`): Overview of subscriber stats and recent runs
 - **Pending Approvals** (`/admin/pending`): Approve/reject new subscriber requests with comments
-- **Recipients** (`/admin/recipients`): Manage subscriber list, status, and deletions with Oslo timestamps
+- **Recipients** (`/admin/recipients`): Manage subscriber list, status, and deletions
 - **Prompts** (`/admin/prompts`): Configure AI prompts with versioning
-- **Runs** (`/admin/runs`): Monitor newsletter generation history with delete functionality and Oslo timezone display
+- **Runs** (`/admin/runs`): Monitor newsletter generation history with delete functionality
 
-### Privacy & GDPR Compliance
-
-- **One-Click Data Deletion**: Full GDPR Article 17 compliance through simplified unsubscribe flow
-- **Automatic Anonymization**: Email addresses anonymized in error logs during unsubscribe
-- **Secure Unsubscribe**: HMAC-signed links prevent tampering and unauthorized actions
-- **Complete Data Removal**: Subscriber records permanently deleted from all systems
-- **Audit Trail**: Compliance logging without storing personal information
-- **External Integration**: API endpoints for subscription verification on external websites
+*All timestamps display in Oslo/Europe timezone*
 
 ### Modern Email Design
 
@@ -247,20 +209,13 @@ The email dispatcher runs on Cloudflare Workers:
 3. Set secrets: `npx wrangler secret put RESEND_API_KEY`
 4. Update webhook URL in GitHub Actions
 
-## 🔐 Security & Compliance
+## 🔐 Security
 
-- All API keys stored as environment variables
-- Signed unsubscribe links with HMAC verification
-- Admin access controlled via Supabase RLS policies
-- Webhook authentication with secure tokens
-
-### Environment Security
-
-- **Encrypted Secrets**: All environment variables encrypted with dotenvx public-key encryption
-- **Safe Git Storage**: Encrypted `.env.local` can be committed to git without exposing secrets
-- **Private Key Protection**: Private decryption key stored in `.env.keys` (gitignored)
-- **Team Collaboration**: Share private key securely via password manager (1Password, LastPass)
-- **Automatic Decryption**: All npm scripts use `dotenvx run -f .env.local` for transparent decryption
+- **Environment Encryption**: All secrets encrypted with dotenvx public-key cryptography
+- **Safe Git Storage**: Encrypted `.env.local` committed to git, decryption key in `.env.keys` (gitignored)
+- **Access Control**: Admin panel protected via Supabase RLS policies
+- **Webhook Security**: Signed tokens for external API calls
+- **GDPR Compliance**: Automatic data deletion and audit logging
 
 ## 🛠️ Development
 
