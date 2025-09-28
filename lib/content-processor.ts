@@ -1,3 +1,27 @@
+/**
+ * CONTENT PROCESSOR - AI PROMPT & CONTENT GENERATION
+ * ===================================================
+ * This is the MOST IMPORTANT file for customizing Budbringer's content.
+ * It controls how the AI generates newsletter content from raw news articles.
+ *
+ * MAIN FUNCTIONS:
+ * - buildPrompt(): Creates the AI prompt with all rules and instructions
+ * - processNewsIntoDigest(): Processes news articles into newsletter content
+ * - validateDigestContent(): Ensures the generated content is valid
+ *
+ * WHAT YOU CAN CUSTOMIZE:
+ * - Newsletter tone and writing style
+ * - Norwegian terminology and language rules
+ * - Content quality standards
+ * - Section organization and structure
+ * - Action item generation
+ * - Source prioritization rules
+ *
+ * IMPORTANT: This file contains the comprehensive AI prompt that was carefully
+ * engineered to produce high-quality Norwegian AI newsletters. Changes to the
+ * prompt can significantly affect content quality.
+ */
+
 import { generateContent, AIResponse } from './ai';
 import { NewsItem } from './news-fetcher';
 import { formatNewsletterDate, formatNorwegianDate } from './timezone';
@@ -10,9 +34,37 @@ export interface ProcessingResult {
   articlesProcessed: number;
 }
 
+/**
+ * BUILD AI PROMPT - THE HEART OF CONTENT GENERATION
+ * =================================================
+ * This function creates the comprehensive prompt that tells the AI how to
+ * write the newsletter. This is where most content customization happens.
+ *
+ * INPUTS:
+ * - newsItems: Raw news articles from RSS feeds
+ * - editorPrompt: Custom instructions from admin panel
+ * - templateConfig: Configuration like tone, audience, style
+ *
+ * OUTPUT: Complete AI prompt string with all instructions
+ *
+ * CUSTOMIZATION AREAS:
+ * 1. Newsletter structure and format
+ * 2. Writing tone and voice
+ * 3. Norwegian terminology rules
+ * 4. Content quality standards
+ * 5. Source prioritization
+ * 6. Action item generation
+ */
 export function buildPrompt(newsItems: NewsItem[], editorPrompt: string, templateConfig: Record<string, unknown>): string {
+  // Get today's date in Norwegian format
   const today = formatNorwegianDate();
 
+  /**
+   * STEP 1: FORMAT NEWS ARTICLES FOR AI
+   * ====================================
+   * Convert raw news data into a readable format for the AI to process.
+   * Each article includes title, source, URL, publish date, summary, and category.
+   */
   const articlesText = newsItems.map((item, index) => {
     return `${index + 1}. "${item.title}" (${item.source})
    URL: ${item.url}
@@ -21,10 +73,42 @@ export function buildPrompt(newsItems: NewsItem[], editorPrompt: string, templat
    Kategori: ${item.category || 'Ukjent'}`;
   }).join('\n\n');
 
+  /**
+   * STEP 2: EXTRACT CONFIGURATION VALUES
+   * =====================================
+   * Get tone, audience, and style settings from the template configuration.
+   * These can be customized in the admin panel.
+   *
+   * CUSTOMIZATION: Change default values here to modify newsletter personality.
+   */
   const tone = (templateConfig.tone as string) || 'profesjonell_tilgjengelig';
   const audience = (templateConfig.target_audience as string) || 'norske lesere';
   const styleGuide = (templateConfig.style_guide as string) || 'Bruk korrekt norsk, bevar engelske fagtermer';
 
+  /**
+   * STEP 3: BUILD THE COMPREHENSIVE AI PROMPT
+   * ==========================================
+   * This is the actual prompt sent to the AI. It contains detailed instructions
+   * for generating high-quality Norwegian AI newsletters.
+   *
+   * PROMPT STRUCTURE:
+   * 1. Role definition (AI newsletter editor)
+   * 2. Custom editor instructions (from admin panel)
+   * 3. Target audience and tone settings
+   * 4. Norwegian terminology rules (KI vs AI, etc.)
+   * 5. Raw news articles data
+   * 6. Writing philosophy and rules
+   * 7. Content quality standards
+   * 8. Output format specification (JSON)
+   * 9. Quality control checklist
+   *
+   * CUSTOMIZATION TIPS:
+   * - Modify the role description to change the AI's personality
+   * - Update Norwegian terminology rules for different language preferences
+   * - Adjust the writing philosophy for different tones
+   * - Change the "RELEVANSTEST" criteria to filter different types of content
+   * - Modify the JSON structure to change newsletter format
+   */
   return `Du er en erfaren redaktør for et norsk nyhetsbrev om kunstig intelligens (KI). Din jobb er å gjøre komplekse KI-nyheter forståelige og nyttige for vanlige folk.
 
 REDAKTØRENS INSTRUKSER:
@@ -160,6 +244,34 @@ Før du sender svaret, sjekk:
 Bruk kun URLer og kildenavn fra artiklene jeg ga deg over. Match hver bullet til riktig originalartikel.`;
 }
 
+/**
+ * PROCESS NEWS INTO DIGEST - MAIN ORCHESTRATION FUNCTION
+ * =======================================================
+ * This function takes raw news articles and processes them into a complete
+ * newsletter digest using AI. It handles the entire workflow from prompt
+ * building to content validation.
+ *
+ * INPUTS:
+ * - newsItems: Array of filtered news articles from RSS feeds
+ * - editorPrompt: Custom instructions from the admin panel
+ * - templateConfig: Settings like tone, audience, style guide
+ * - preferredModel: Which AI model to use ('claude', 'gpt', or 'auto')
+ *
+ * OUTPUT: ProcessingResult with generated content and metadata
+ *
+ * WORKFLOW:
+ * 1. Handle empty news case (fallback content)
+ * 2. Build comprehensive AI prompt
+ * 3. Send prompt to AI and get response
+ * 4. Parse JSON response and validate structure
+ * 5. Return processed content with metadata
+ *
+ * CUSTOMIZATION:
+ * - Modify fallback content for days with no news
+ * - Adjust AI model preferences
+ * - Change content validation rules
+ * - Add additional processing steps
+ */
 export async function processNewsIntoDigest(
   newsItems: NewsItem[],
   editorPrompt: string,
@@ -167,6 +279,14 @@ export async function processNewsIntoDigest(
   preferredModel: 'claude' | 'gpt' | 'auto' = 'auto'
 ): Promise<ProcessingResult> {
 
+  /**
+   * STEP 1: HANDLE EMPTY NEWS CASE
+   * ===============================
+   * If no relevant news articles are found, return fallback content
+   * instead of generating an empty newsletter.
+   *
+   * CUSTOMIZATION: Modify this fallback message to match your brand voice.
+   */
   if (newsItems.length === 0) {
     // Return fallback content if no news
     return {
@@ -289,3 +409,59 @@ export function validateDigestContent(content: DigestContent): string[] {
 
   return errors;
 }
+
+/**
+ * CONTENT CUSTOMIZATION REFERENCE GUIDE
+ * ======================================
+ * Quick reference for common content customization tasks.
+ *
+ * TONE & PERSONALITY:
+ * - Line 84: Change default tone from 'profesjonell_tilgjengelig'
+ * - Line 85: Change default audience from 'norske lesere'
+ * - Line 86: Change default style guide
+ * - Line 112: Modify AI role description ("Du er en erfaren redaktør...")
+ *
+ * NORWEGIAN TERMINOLOGY:
+ * - Lines 117-122: Update terminology rules (KI vs AI, maskinlæring, etc.)
+ * - Add new terminology rules to this section as needed
+ *
+ * WRITING RULES:
+ * - Lines 128-134: Modify tone & voice guidelines
+ * - Lines 138-144: Update "what this means" requirements
+ * - Lines 149-160: Change content filtering rules
+ * - Lines 164-170: Adjust explanation requirements
+ *
+ * CONTENT QUALITY:
+ * - Lines 172-178: Modify relevance test criteria
+ * - Lines 238-242: Change quality control checklist
+ *
+ * FALLBACK CONTENT (No News Days):
+ * - Line 295: Change fallback lead message
+ * - Line 297: Change fallback section heading
+ * - Line 298: Change fallback bullet text
+ * - Line 300: Change fallback action item
+ *
+ * AI MODEL PREFERENCES:
+ * - Line 279: Change default model from 'auto'
+ * - Line 315: Adjust AI generation parameters (max tokens: 4000)
+ *
+ * OUTPUT FORMAT:
+ * - Lines 182-217: Modify JSON structure and example content
+ * - This affects the newsletter layout and sections
+ *
+ * COMMON CUSTOMIZATION TASKS:
+ * 1. Change newsletter personality: Modify lines 112-116
+ * 2. Update language rules: Modify lines 117-122
+ * 3. Adjust content quality: Modify lines 172-178
+ * 4. Change no-news message: Modify lines 295-300
+ * 5. Switch AI models: Modify line 279
+ *
+ * TESTING YOUR CHANGES:
+ * 1. Run: npm run digest:generate
+ * 2. Check admin panel for digest runs
+ * 3. Review generated content quality
+ * 4. Adjust prompt based on results
+ *
+ * IMPORTANT: Always test prompt changes thoroughly as they can significantly
+ * impact content quality. Consider A/B testing major changes.
+ */
